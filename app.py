@@ -152,6 +152,4 @@ def get_graph():
     buffer.close()
     return graph
 
-if __name__ == '__main__':
-    app.run(debug=True)
 
