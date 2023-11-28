@@ -1,0 +1,64 @@
+import psycopg2
+from werkzeug.security import generate_password_hash, check_password_hash
+
+def get_db_connection():
+    return psycopg2.connect(
+        host="ep-royal-thunder-45099107.us-east-1.postgres.vercel-storage.com",
+        database="verceldb",
+        user="default",
+        password="QhYas0zXyE7A",
+        port="5432"       
+    )
+
+def create_user(email, password):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    hashed_password = generate_password_hash(password)
+    try:
+        cursor.execute("INSERT INTO users (email, password) VALUES (%s, %s)", (email, hashed_password))
+        conn.commit()
+    finally:
+        conn.close()
+
+def verify_user(email, password):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT id, password FROM users WHERE email = %s", (email,))
+        user = cursor.fetchone()
+        if user and check_password_hash(user[1], password):
+            return user[0]
+    finally:
+        conn.close()
+    return False
+
+def add_stock_to_user(user_id, stock_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("INSERT INTO user_stocks (user_id, stock_id) VALUES (%s, %s)", (user_id, stock_id))
+        conn.commit()
+    finally:
+        conn.close()
+
+def get_user_stocks(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT s.* FROM stocks s JOIN user_stocks us ON s.id = us.stock_id WHERE us.user_id = %s", (user_id,))
+        stocks = cursor.fetchall()
+        return stocks
+    finally:
+        conn.close()
+
+# Placeholder function for fetching master stocks
+def get_master_stocks():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT * FROM stocks")
+        stocks = cursor.fetchall()
+        return stocks
+    finally:
+        conn.close()
+

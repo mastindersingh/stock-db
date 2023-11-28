@@ -1,0 +1,270 @@
+from flask import Flask, render_template, request, redirect, url_for, session
+from datetime import timedelta
+import os
+from db import read_stock_purchases, get_user_stocks, write_stock_purchases, verify_user, create_user, get_user_id
+import yfinance as yf
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+from io import BytesIO
+import base64
+from decimal import Decimal
+import pandas as pd
+
+app = Flask(__name__)
+app.secret_key = os.environ.get('SECRET_KEY', 'your-default-secret-key')
+app.permanent_session_lifetime = timedelta(days=5)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        if verify_user(email, password):
+            user_id = get_user_id(email)
+            session['logged_in'] = True
+            session['user_id'] = user_id
+            return redirect(url_for('index'))
+        else:
+            return render_template('login.html', error="Invalid credentials.")
+    return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        # Add logic to validate the input data
+        create_user(email, password)
+        return redirect(url_for('login'))
+    return render_template('register.html')
+
+
+#extra
+
+def get_updated_stock_purchases_df(user_id):
+    conn = get_db_connection()  # Make sure this function is implemented to get a database connection
+    cursor = conn.cursor()
+
+    # Assuming your stock_purchases table has columns: ticker, buy_date, buy_price, quantity, user_id
+    query = """
+        SELECT ticker, buy_date, buy_price, quantity
+        FROM stock_purchases
+        WHERE user_id = %s;
+    """
+    cursor.execute(query, (user_id,))
+    results = cursor.fetchall()
+    conn.close()
+
+    # Convert results to a DataFrame
+    df = pd.DataFrame(results, columns=['Ticker', 'BuyDate', 'BuyPrice', 'Quantity'])
+    return df
+
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+
+
+#@app.route('/master-portfolio')
+#def master_portfolio():
+#   if 'logged_in' not in session:
+#        return redirect(url_for('login'))
+    # Fetch and display master portfolio (you need to implement the logic to fetch these stocks)
+#    stocks = get_master_stocks()  # Placeholder function
+#    return render_template('master_portfolio.html', stocks=stocks)
+
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+
+    user_id = session.get('user_id')
+    user_stocks = get_user_stocks(user_id) if user_id else []
+    return render_template('stocks.html', user_stocks=user_stocks)
+
+@app.route('/master-portfolio')
+def master_portfolio():
+    master_stocks = get_master_user_stocks()
+    return render_template('master_portfolio.html', stocks=master_stocks)
+
+
+
+
+@app.route('/add-stock-to-profile/<int:stock_id>', methods=['POST'])
+def add_stock_to_profile(stock_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    user_id = session['user_id']
+    try:
+        existing_association = UserStock.query.filter_by(user_id=user_id, stock_id=stock_id).first()
+        if not existing_association:
+            user_stock = UserStock(user_id=user_id, stock_id=stock_id)
+            db.session.add(user_stock)
+            db.session.commit()
+    except Exception as e:
+        # Handle the exception
+        return str(e)  # Example error handling
+    return redirect(url_for('master_portfolio'))
+
+
+
+@app.route('/stocks', methods=['POST'])
+def add_stock():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        ticker = request.form.get('ticker')
+        buy_date = request.form.get('buy_date')
+        buy_price = request.form.get('buy_price')
+        quantity = request.form.get('quantity')
+        print(f"Received data: {ticker}, {buy_date}, {buy_price}, {quantity}")  # Debug print
+        # Convert values to appropriate types
+        buy_price = Decimal(buy_price)
+        quantity = int(quantity)
+
+        # Create a DataFrame for the new stock purchase
+        new_stock_data = pd.DataFrame({
+            'Ticker': [ticker],	
+            'BuyDate': [buy_date],
+            'BuyPrice': [buy_price],
+            'Quantity': [quantity]
+        })
+
+        # Write the new stock purchase to the database
+        user_id = session.get('user_id')
+        write_stock_purchases(user_id, new_stock_data)
+        updated_stock_purchases_df = get_updated_stock_purchases_df(user_id)
+        stock_data = fetch_stock_data(updated_stock_purchases_df)
+        return render_template('stocks.html', stock_data=stock_data)
+
+
+def get_stock_chart_base64(stock_data):
+    plt.figure()
+    plt.plot(stock_data['dates'], stock_data['prices'])
+    plt.title(f"{stock_data['ticker']} Stock Price Over Time")
+    plt.xlabel("Date")
+    plt.ylabel("Price")
+
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    graph = base64.b64encode(image_png)
+    graph = graph.decode('utf-8')
+    buffer.close()
+    plt.close()
+
+    return graph
+
+@app.route('/user-portfolio')
+def user_portfolio():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+
+    user_id = session.get('user_id')
+    if user_id is None:
+        return redirect(url_for('login'))
+
+    user_stocks = get_user_stocks(user_id)  # This should return a list of stocks with quantities
+    stock_data = {}
+
+    for stock in user_stocks:
+        stock_prices_data = fetch_stock_prices(stock[1])  # Fetch stock prices over time for each stock
+
+        chart = get_stock_chart_base64(stock_prices_data)
+
+        stock_data[stock[1]] = {
+            'quantity': stock[2],
+            'chart': chart
+        }
+
+    return render_template('user_portfolio.html', stocks=stock_data)
+
+def fetch_stock_data(stock_purchases):
+    stock_data = {}
+    for ticker, group in stock_purchases.groupby('Ticker'):
+        total_quantity = group['Quantity'].sum()
+        weighted_avg_price = Decimal((group['BuyPrice'] * group['Quantity']).sum()) / Decimal(int(total_quantity))
+        tickerData = yf.Ticker(ticker)
+        data = tickerData.history(period="max")
+        current_price = Decimal(data['Close'].iloc[-1])
+        percentage_change = ((current_price - weighted_avg_price) / weighted_avg_price) * 100
+        performance = "Up" if current_price > weighted_avg_price else "Down"
+        plt.figure(figsize=(10, 4))
+        plt.plot(data['Close'])
+        plt.title(f"{ticker} Stock Price")
+        plt.xlabel("Date")
+        plt.ylabel("Price")
+        graph = get_graph()
+
+        stock_data[ticker] = {
+            'data': data,
+            'earliest_buy_date': group['BuyDate'].min(),
+            'weighted_avg_price': weighted_avg_price,
+            'total_quantity': total_quantity,
+            'current_price': current_price,
+            'performance': performance,
+            'percentage_change': percentage_change,
+            'graph': graph
+        }
+
+    return stock_data
+
+
+
+def fetch_stock_prices(ticker):
+    # Fetch historical stock prices for the given ticker
+    stock = yf.Ticker(ticker)
+    hist = stock.history(period="1mo")  # For example, fetch the last month's data
+
+    return {
+        'ticker': ticker,
+        'dates': hist.index.tolist(),
+        'prices': hist['Close'].tolist()
+    }
+
+
+def get_graph():
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    graph = base64.b64encode(image_png)
+    graph = graph.decode('utf-8')
+    buffer.close()
+    plt.close()  # Close the figure to free up memory
+    return graph
+
+
+
+
+
+
+
+def get_stock_chart_base64(stock_data):
+    plt.figure()
+    plt.plot(stock_data['dates'], stock_data['prices'])
+    plt.title(f"{stock_data['ticker']} Stock Price Over Time")
+    plt.xlabel("Date")
+    plt.ylabel("Price")
+
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    graph = base64.b64encode(image_png)
+    graph = graph.decode('utf-8')
+    buffer.close()
+    plt.close()
+
+    return graph
+if __name__ == '__main__':
+    app.run(debug=True)
+

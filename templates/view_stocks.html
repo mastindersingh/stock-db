@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Stock Purchases</title>
+</head>
+<body>
+    <h1>Stock Purchases</h1>
+    <ul>
+        {% for stock in stocks %}
+        <li>{{ stock.ticker }} - {{ stock.buy_date }} - {{ stock.buy_price }} - {{ stock.quantity }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+

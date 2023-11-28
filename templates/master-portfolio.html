@@ -1,0 +1,16 @@
+<!-- master_portfolio.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Master Portfolio</title>
+</head>
+<body>
+    <h1>Master Portfolio</h1>
+    <ul>
+        {% for stock in stocks %}
+            <li>{{ stock.ticker }} - <a href="{{ url_for('add_stock_to_profile', stock_id=stock.id) }}">Add to My Portfolio</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+

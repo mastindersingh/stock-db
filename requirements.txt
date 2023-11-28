@@ -1,0 +1,7 @@
+Flask
+Flask-OAuthLib
+psycopg2-binary
+pandas
+yfinance
+matplotlib
+

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Portfolio</title>
+</head>
+<body>
+    <h1>User Portfolio</h1>
+
+    {% if stocks %}
+        {% for ticker, data in stocks.items() %}
+            <h2>{{ ticker }}</h2>
+            <p>Quantity: {{ data.quantity }}</p>
+            <div>
+                <img src="data:image/png;base64,{{ data.chart }}" alt="Stock chart for {{ ticker }}">
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No stocks in portfolio.</p>
+    {% endif %}
+</body>
+</html>
+
