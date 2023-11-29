@@ -13,7 +13,8 @@ import logging
 
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'your-default-secret-key')
+app.secret_key = os.environ.get('bApG1HXBfOeC5JhRj_tvKA', 'your-default-secret-key')
+
 
 
 
@@ -152,4 +153,5 @@ def get_graph():
     buffer.close()
     return graph
 
-
+if __name__ == "__main__":
+    app.run()
