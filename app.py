@@ -10,7 +10,8 @@ import base64
 from decimal import Decimal
 import pandas as pd
 import logging
-
+from dotenv import load_dotenv
+load_dotenv('.env.development.local')
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'your-default-secret-key')
@@ -152,4 +153,6 @@ def get_graph():
     buffer.close()
     return graph
 
+if __name__ == '__main__':
+    app.run(debug=True)
 
