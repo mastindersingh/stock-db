@@ -152,6 +152,3 @@ def get_graph():
     graph = graph.decode('utf-8')
     buffer.close()
     return graph
-
-if __name__ == "__main__":
-    app.run()
