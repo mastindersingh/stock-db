@@ -17,6 +17,36 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'your-default-secret-key')
 
 
+@app.route('/user-portfolio', methods=['GET', 'POST'])
+def user_portfolio():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+
+    user_id = session.get('user_id')
+    if not user_id:
+        print("User ID not found in session. Redirecting to login.")
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        ticker = request.form.get('ticker')
+        buy_date = request.form.get('buy_date')
+        buy_price = request.form.get('buy_price')
+        quantity = request.form.get('quantity')
+
+        buy_price = Decimal(buy_price)
+        quantity = int(quantity)
+
+        new_stock_data = pd.DataFrame({
+            'Ticker': [ticker],
+            'BuyDate': [buy_date],
+            'BuyPrice': [buy_price],
+            'Quantity': [quantity]
+        })
+
+        write_stock_purchases(user_id, new_stock_data)
+
+    stock_data = fetch_stock_data(read_stock_purchases(user_id))
+    return render_template('user_portfolio.html', stock_data=stock_data)
 
 
 @app.route('/login', methods=['GET', 'POST'])
