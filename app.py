@@ -14,7 +14,8 @@ from dotenv import load_dotenv
 load_dotenv('.env.development.local')
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'your-default-secret-key')
+app.secret_key = os.environ.get('bApG1HXBfOeC5JhRj_tvKA', 'your-default-secret-key')
+
 
 
 @app.route('/user-portfolio', methods=['GET', 'POST'])
