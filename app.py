@@ -12,10 +12,14 @@ import pandas as pd
 import logging
 from dotenv import load_dotenv
 load_dotenv('.env.development.local')
-
+#from flask_oauthlib.client import OAuth
+from authlib.integrations.flask_client import OAuth
+#from models import User
+ 
 app = Flask(__name__)
 app.secret_key = os.environ.get('bApG1HXBfOeC5JhRj_tvKA', 'your-default-secret-key')
-
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://default:QhYas0zXyE7A@ep-royal-thunder-45099107-pooler.us-east-1.postgres.vercel-storage.com:5432/verceldb'
+#db.init_app(app)
 
 
 @app.route('/user-portfolio', methods=['GET', 'POST'])
@@ -102,8 +106,48 @@ def index():
     return render_template('stocks.html', stock_data=stock_data)
 
 
+oauth = OAuth(app)
+
+# Google OAuth Configuration with Authlib
+google = oauth.register(
+    name='google',
+    client_id='72321166098-1kb2nesvub2drdp6dqhmjir92uei1sce.apps.googleusercontent.com',
+    client_secret='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',
+   # client_id='72321166098-rqs54h296h3pp6clb1h19cn7bp4rp8rn.apps.googleusercontent.com',
+    #client_secret='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',
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    api_base_url='https://www.googleapis.com/oauth2/v1/',
+    client_kwargs={'scope': 'email'}
+)
+
+def google_login():
+    return google.authorize(callback=url_for('authorized', _external=True))
 
 
+@app.route('/login/authorized')
+def authorized():
+    token = google.authorize_access_token()
+    user_info = google.get('userinfo').json()
+
+    # Example: Check if user exists in your database
+    user = User.query.filter_by(email=user_info['email']).first()
+    if not user:
+        # User doesn't exist, so create a new user
+        user = User(email=user_info['email'])
+        db.session.add(user)
+        db.session.commit()
+
+    # Set user information in session
+    session['user_id'] = user.id
+    session['email'] = user.email
+
+    # Redirect to a dashboard or home page
+    return redirect(url_for('dashboard'))
+@app.route('/google-login')
+def google_login():
+    redirect_uri = url_for('authorized', _external=True)
+    return google.authorize_redirect(redirect_uri)
 
 
 @app.route('/stocks', methods=['POST'])
