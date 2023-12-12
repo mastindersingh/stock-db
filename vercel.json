@@ -4,7 +4,7 @@
     {
       "src": "app.py",
       "use": "@vercel/python",
-      "config": { "maxLambdaSize": "300mb" } // Adjust the value as needed
+      "config": { "maxLambdaSize": "200mb" }
     }
   ],
   "routes": [
@@ -14,4 +14,3 @@
     }
   ]
 }
-
