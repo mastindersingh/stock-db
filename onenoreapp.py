@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import os
-from db import get_subscription_code_for_user, update_subscription_code, read_stock_purchases, write_stock_purchases, get_user_id, verify_user, create_user, verify_subscription_code
+from db import read_stock_purchases, write_stock_purchases, get_user_id, verify_user, create_user
 import yfinance as yf
 import matplotlib
 matplotlib.use('Agg')  # Set the backend to Agg
@@ -48,63 +48,20 @@ def login_google():
 def authorized():
     token = google.authorize_access_token()
     user_info = google.get('userinfo').json()
-    app.logger.info(f"Google OAuth user info: {user_info}")
-
     user_id = get_user_id(user_info['email'])
     if not user_id:
-        user_id = create_user(user_info['email'], binascii.hexlify(os.urandom(24)).decode())
-        app.logger.info(f"New user created with ID: {user_id}")
-    else:
-        app.logger.info(f"Existing user logged in with ID: {user_id}")
-
+       # user_id = create_user(user_info['email'], os.urandom(24))  # Random password
+         user_id = create_user(user_info['email'], binascii.hexlify(os.urandom(24)).decode())  # Random password
     session['logged_in'] = True
     session['user_id'] = user_id
     session['email'] = user_info['email']
-
-    app.logger.info(f"Session set: {session}")
     return redirect(url_for('user_portfolio'))
-
-
-
-@app.route('/subscribe', methods=['GET', 'POST'])
-def subscribe():
-    if request.method == 'POST':
-        subscription_code = request.form['subscription_code']
-        user_id = session.get('user_id')
-
-        if user_id and verify_subscription_code(session.get('email'), subscription_code):
-            update_subscription_code(user_id, subscription_code)
-            return redirect(url_for('master_portfolio'))
-        else:
-            return render_template('subscribe.html', error="Invalid subscription code.")
-
-    return render_template('subscribe.html')
-
-
-
-@app.route('/master-portfolio')
-def master_portfolio():
-    if 'logged_in' not in session:
-        return redirect(url_for('login'))
-
-    # Fetch the user ID for mastinder@yahoo.com
-    master_user_id = get_user_id('mastinder@yahoo.com')
-    if master_user_id is None:
-        return "Master user not found", 404
-
-    # Fetch the stock data for the master user
-    master_stock_data = fetch_stock_data(read_stock_purchases(master_user_id))
-
-    return render_template('master_portfolio.html', stock_data=master_stock_data)
 
 
 @app.route('/user-portfolio', methods=['GET', 'POST'])
 def user_portfolio():
-    if 'logged_in' not in session or 'user_id' not in session:
-        app.logger.warning("User ID not found in session. Redirecting to login.")
+    if 'logged_in' not in session:
         return redirect(url_for('login'))
-
-    # Rest of your code...
 
     user_id = session.get('user_id')
     if not user_id:

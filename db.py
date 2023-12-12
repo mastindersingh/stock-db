@@ -13,6 +13,50 @@ def get_db_connection():
     )
 
 
+
+def verify_subscription_code(email, code):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT id FROM users WHERE email = %s AND subscription_code = %s", (email, code))
+        result = cursor.fetchone()
+        return result is not None
+    except Exception as e:
+        print(f"Error in verify_subscription_code: {e}")
+        return False
+    finally:
+        conn.close()
+
+def update_subscription_code(user_id, code):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("UPDATE users SET subscription_code = %s WHERE id = %s", (code, user_id))
+        conn.commit()
+    except Exception as e:
+        print(f"Error in update_subscription_code: {e}")
+    finally:
+        conn.close()
+
+
+def get_subscription_code_for_user(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT subscription_code FROM users WHERE id = %s", (user_id,))
+        result = cursor.fetchone()
+        return result[0] if result else None
+    except Exception as e:
+        print(f"Error in get_subscription_code_for_user: {e}")
+        return None
+    finally:
+        conn.close()
+
+
+
+
+
+
 def read_stock_purchases(user_id):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -69,7 +113,8 @@ def get_user_id(email):
         result = cursor.fetchone()
         return result[0] if result else None
     except Exception as e:
-        print(f"Error in get_user_id: {e}")
+       # print(f"Error in get_user_id: {e}")
+        print(f"Error in get_user_id for email {email}: {e}")
         return None
     finally:
         conn.close()

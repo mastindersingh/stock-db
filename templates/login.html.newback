@@ -71,12 +71,12 @@
             <input type="password" name="password" placeholder="Password">
             <button type="submit">Login</button>
         </form>
-
-        <!-- Google OAuth Login -->
+    <!-- Google OAuth Login 
         <div class="oauth-container">
-            <a href="/login/google">Login with Google</a>
+            <!-- Google OAuth Login -->
+            <a href="/google-login">Login with Google</a>
         </div>
-
+       -->
         <div class="register-container">
             <!-- Link to Registration Page -->
             <p>Don't have an account? <a href="/register">Register here</a>.</p>

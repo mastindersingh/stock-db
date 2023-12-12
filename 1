@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import os
-from db import get_subscription_code_for_user, update_subscription_code, read_stock_purchases, write_stock_purchases, get_user_id, verify_user, create_user, verify_subscription_code
+from db import update_subscription_code, read_stock_purchases, write_stock_purchases, get_user_id, verify_user, create_user, verify_subscription_code
 import yfinance as yf
 import matplotlib
 matplotlib.use('Agg')  # Set the backend to Agg
@@ -84,18 +84,20 @@ def subscribe():
 
 @app.route('/master-portfolio')
 def master_portfolio():
-    if 'logged_in' not in session:
+    if 'logged_in' not in session or 'user_id' not in session:
         return redirect(url_for('login'))
 
-    # Fetch the user ID for mastinder@yahoo.com
-    master_user_id = get_user_id('mastinder@yahoo.com')
-    if master_user_id is None:
-        return "Master user not found", 404
+    user_id = session.get('user_id')
+    email = session.get('email')
 
-    # Fetch the stock data for the master user
-    master_stock_data = fetch_stock_data(read_stock_purchases(master_user_id))
+    # Assuming you have a function get_subscription_code to fetch the code
+    subscription_code = get_subscription_code(user_id)
 
-    return render_template('master_portfolio.html', stock_data=master_stock_data)
+    if verify_subscription_code(email, subscription_code):
+        stock_data = fetch_stock_data(read_stock_purchases(user_id))
+        return render_template('master_portfolio.html', stock_data=stock_data)
+    else:
+        return redirect(url_for('subscribe'))
 
 
 @app.route('/user-portfolio', methods=['GET', 'POST'])

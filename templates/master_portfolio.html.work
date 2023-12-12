@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Master Portfolio</title>
+</head>
+<body>
+    <h1>Master Portfolio</h1>
+    <h2>Stocks of Mastinder</h2>
+    <table border="1">
+        <tr>
+            <th>Ticker</th>
+            <th>Buy Date</th>
+            <th>Buy Price</th>
+            <th>Quantity</th>
+        </tr>
+        {% for stock in stock_data %}
+        <tr>
+            <td>{{ stock['Ticker'] }}</td>
+            <td>{{ stock['BuyDate'] }}</td>
+            <td>{{ stock['BuyPrice'] }}</td>
+            <td>{{ stock['Quantity'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
+

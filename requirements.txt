@@ -5,5 +5,4 @@ yfinance
 matplotlib
 python-dotenv
 werkzeug
-authlib
 
