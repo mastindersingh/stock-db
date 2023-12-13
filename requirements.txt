@@ -1,7 +1,7 @@
 Flask
 psycopg2-binary
 yfinance
-matplotlib-base
+matplotlib
 python-dotenv
 werkzeug
 
