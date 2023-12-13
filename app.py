@@ -11,7 +11,7 @@ from decimal import Decimal
 import pandas as pd
 import logging
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv('.env.development.local')
 
 #from flask_oauthlib.client import OAuth
 #from authlib.integrations.flask_client import OAuth
