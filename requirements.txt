@@ -1,8 +1,8 @@
 Flask
-pandas
+pandas-light
 psycopg2-binary
 yfinance
-matplotlib
+matplotlib-base
 python-dotenv
 werkzeug
 
