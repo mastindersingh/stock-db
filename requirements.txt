@@ -3,7 +3,7 @@ yfinance==0.1.70
 pandas==1.3.4
 authlib
 psycopg2-binary
-yfinance
-matplotlib
-werkzeug
+matplotlib==3.5.1
+yfinance==0.1.70
+Werkzeug==0.16.1
 
