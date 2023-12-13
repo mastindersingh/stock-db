@@ -6,4 +6,5 @@ psycopg2-binary
 matplotlib==3.5.1
 yfinance==0.1.70
 Werkzeug==0.16.1
+MarkupSafe<2.0
 
