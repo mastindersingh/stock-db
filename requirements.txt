@@ -1,5 +1,4 @@
 Flask
-pandas-light
 psycopg2-binary
 yfinance
 matplotlib-base
