@@ -2,6 +2,7 @@ Flask==1.1.4
 yfinance==0.1.70
 pandas==1.3.4
 authlib
+python-dotenv
 psycopg2-binary
 matplotlib==3.5.1
 yfinance==0.1.70
