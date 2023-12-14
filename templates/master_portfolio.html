@@ -1,47 +1,99 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>master Stock Data</title>
+    <title>Master Stock Data</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+            padding: 50px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        h1, h2 {
+            color: #0056b3;
+            margin-bottom: 20px;
+        }
+
+        input[type=text], input[type=date], input[type=number], input[type=submit] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input[type=submit] {
+            background-color: #0056b3;
+            color: white;
+            cursor: pointer;
+        }
+
+        input[type=submit]:hover {
+            background-color: #004494;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h1>Master Stock Data</h1>
+    <div class="container">
+        <h1>Master Stock Data</h1>
+        <form action="{{ url_for('add_stock') }}" method="post">
+            <label for="ticker">Ticker:</label>
+            <input type="text" id="ticker" name="ticker" required><br><br>
 
-    <!-- Form for Adding Stock Data -->
-    <form action="{{ url_for('add_stock') }}" method="post">
-        <label for="ticker">Ticker:</label>
-        <input type="text" id="ticker" name="ticker" required><br><br>
+            <label for="buy_date">Buy Date:</label>
+            <input type="date" id="buy_date" name="buy_date" required><br><br>
 
-        <label for="buy_date">Buy Date:</label>
-        <input type="date" id="buy_date" name="buy_date" required><br><br>
+            <label for="buy_price">Buy Price:</label>
+            <input type="number" id="buy_price" name="buy_price" step="0.01" required><br><br>
 
-        <label for="buy_price">Buy Price:</label>
-        <input type="number" id="buy_price" name="buy_price" step="0.01" required><br><br>
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" required><br><br>
 
-        <label for="quantity">Quantity:</label>
-        <input type="number" id="quantity" name="quantity" required><br><br>
+            <input type="submit" value="Add Stock">
+        </form>
 
-        <input type="submit" value="Add Stock">
-    </form>
+        <hr>
 
-    <hr>
+        <!-- Displaying Stock Data -->
+        {% if stock_data %}
+            {% for ticker, data in stock_data.items() %}
+                <h2>{{ ticker }}</h2>
+                <p>Earliest Buy Date: {{ data.earliest_buy_date }}</p>
+                <p>Weighted Average Buy Price: {{ data.weighted_avg_price }}</p>
+                <p>Total Quantity: {{ data.total_quantity }}</p>
+                <p>Current Price: {{ data.current_price }}</p>
+                <p>Performance: {{ data.performance }}</p>
+                <p>Percentage Change: {{ data.percentage_change }}%</p>
+                <div>
+                    <img src="data:image/png;base64,{{ data.graph }}" alt="Stock graph for {{ ticker }}">
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No stock data available.</p>
+        {% endif %}
 
-    <!-- Displaying Stock Data -->
-    {% if stock_data %}
-        {% for ticker, data in stock_data.items() %}
-            <h2>{{ ticker }}</h2>
-            <p>Earliest Buy Date: {{ data.earliest_buy_date }}</p>
-            <p>Weighted Average Buy Price: {{ data.weighted_avg_price }}</p>
-            <p>Total Quantity: {{ data.total_quantity }}</p>
-            <p>Current Price: {{ data.current_price }}</p>
-            <p>Performance: {{ data.performance }}</p>
-            <p>Percentage Change: {{ data.percentage_change }}%</p>
-            <div>
-                <img src="data:image/png;base64,{{ data.graph }}" alt="Stock graph for {{ ticker }}">
-            </div>
-        {% endfor %}
-    {% else %}
-        <p>No stock data available.</p>
-    {% endif %}
+        <a href="/logout">Logout</a>
+    </div>
 </body>
 </html>
-
