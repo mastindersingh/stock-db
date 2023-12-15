@@ -2,46 +2,166 @@
 <html>
 <head>
     <title>User Portfolio</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f2f2f2;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .header, .form-container, .stock-data-container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        h1, h2 {
+            color: #0056b3;
+            margin-bottom: 20px;
+        }
+
+        .form-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .form-container label, .form-container input {
+            margin-right: 10px;
+        }
+
+        input[type=text], input[type=date], input[type=number], input[type=submit] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input[type=submit] {
+            background-color: #0056b3;
+            color: white;
+            cursor: pointer;
+        }
+
+        input[type=submit]:hover {
+            background-color: #004494;
+        }
+
+        .stock-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .stock-details, .stock-graph {
+            flex: 1;
+            margin: 10px;
+        }
+
+        .stock-graph {
+            text-align: center;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            overflow: hidden;
+            background-color:  #0056b3;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .navbar a {
+            display: inline-block;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #004494;
+            color: black;
+        }
+    </style>
 </head>
 <body>
-    <h1>User Portfolio</h1>
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('user_portfolio') }}">User Portfolio</a>
+        <a href="{{ url_for('master_portfolio') }}">Master Portfolio</a>
+        <a href="{{ url_for('subscribe') }}">Subscribe</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
 
-    <!-- Form for Adding Stock Data -->
-    <form action="{{ url_for('user_portfolio') }}" method="post">
-        <label for="ticker">Ticker:</label>
-        <input type="text" id="ticker" name="ticker" required><br><br>
+    <div class="container">
+        <div class="header">
+            <h1>User Portfolio</h1>
+        </div>
 
-        <label for="buy_date">Buy Date:</label>
-        <input type="date" id="buy_date" name="buy_date" required><br><br>
+        <div class="form-container">
+            <form action="{{ url_for('user_portfolio') }}" method="post">
+                <label for="ticker">Ticker:</label>
+                <input type="text" id="ticker" name="ticker" required>
 
-        <label for="buy_price">Buy Price:</label>
-        <input type="number" id="buy_price" name="buy_price" step="0.01" required><br><br>
+                <label for="buy_date">Buy Date:</label>
+                <input type="date" id="buy_date" name="buy_date" required>
 
-        <label for="quantity">Quantity:</label>
-        <input type="number" id="quantity" name="quantity" required><br><br>
+                <label for="buy_price">Buy Price:</label>
+                <input type="number" id="buy_price" name="buy_price" step="0.01" required>
 
-        <input type="submit" value="Add Stock">
-    </form>
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" required>
 
-    <hr>
+                <input type="submit" value="Add Stock">
+            </form>
+        </div>
 
-    <!-- Displaying Stock Data -->
-    {% if stock_data %}
-        {% for ticker, data in stock_data.items() %}
-            <h2>{{ ticker }}</h2>
-            <p>Earliest Buy Date: {{ data.earliest_buy_date }}</p>
-            <p>Weighted Average Buy Price: {{ data.weighted_avg_price }}</p>
-            <p>Total Quantity: {{ data.total_quantity }}</p>
-            <p>Current Price: {{ data.current_price }}</p>
-            <p>Performance: {{ data.performance }}</p>
-            <p>Percentage Change: {{ data.percentage_change }}%</p>
-            <div>
-                <img src="data:image/png;base64,{{ data.graph }}" alt="Stock graph for {{ ticker }}">
-            </div>
-        {% endfor %}
-    {% else %}
-        <p>No stock data available.</p>
-    {% endif %}
+        <div class="stock-data-container">
+            <!-- Displaying Stock Data -->
+            {% if stock_data %}
+                {% for ticker, data in stock_data.items() %}
+                    <div class="stock-row">
+                        <div class="stock-details">
+                            <h2>{{ ticker }}</h2>
+                            <p>Earliest Buy Date: {{ data.earliest_buy_date }}</p>
+                            <p>Weighted Average Buy Price: {{ data.weighted_avg_price }}</p>
+                            <p>Total Quantity: {{ data.total_quantity }}</p>
+                            <p>Current Price: {{ data.current_price }}</p>
+                            <p>Performance: {{ data.performance }}</p>
+                            <p>Percentage Change: {{ data.percentage_change }}%</p>
+                        </div>
+                        <div class="stock-graph">
+                            <img src="data:image/png;base64,{{ data.graph }}" alt="Stock graph for {{ ticker }}">
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No stock data available.</p>
+            {% endif %}
+        </div>
+    </div>
 </body>
 </html>
-
