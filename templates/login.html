@@ -3,67 +3,40 @@
 <head>
     <title>Login</title>
     <style>
-        body {
+        /* Existing styles... */
+
+        /* Navbar styles */
+        .navbar {
+            overflow: hidden;
+            background-color: #0056b3; /* Match the color of the login button */
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f2f2f2;
             text-align: center;
-            padding: 50px;
-            color: #333;
+            padding: 10px 0;
         }
 
-        .container {
-            max-width: 400px;
-            margin: auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        h1 {
-            color: #0056b3;
-            margin-bottom: 30px;
-        }
-
-        input[type=email], input[type=password] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        button {
-            width: 100%;
-            background-color: #0056b3;
+        .navbar a {
+            display: inline-block;
             color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #004494;
-        }
-
-        .oauth-container, .register-container {
-            margin-top: 20px;
-        }
-
-        a {
-            color: #007bff;
+            padding: 8px 16px;
             text-decoration: none;
         }
 
-        a:hover {
-            text-decoration: underline;
+        .navbar a:hover {
+            background-color: #004494; /* Darker shade for hover, similar to button hover */
+            color: white;
         }
     </style>
 </head>
 <body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('user_portfolio') }}">User Portfolio</a>
+        <a href="{{ url_for('master_portfolio') }}">Master Portfolio</a>
+        <a href="{{ url_for('subscribe') }}">Subscribe</a>
+        <!-- No login/register links as this is the login page -->
+    </div>
+
     <div class="container">
         <h1>Login</h1>
         <form method="post" action="/login">
@@ -84,4 +57,3 @@
     </div>
 </body>
 </html>
-
