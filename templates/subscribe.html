@@ -2,16 +2,108 @@
 <html>
 <head>
     <title>Subscribe</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f2f2f2;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .navbar {
+            overflow: hidden;
+            background-color: #0056b3;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .navbar a {
+            display: inline-block;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #004494;
+            color: white;
+        }
+
+        .container {
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #0056b3;
+            margin-bottom: 20px;
+        }
+
+        input[type=text], button {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #0056b3;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #004494;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Subscribe to Access Premium Content</h1>
-    {% if error %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
-    <form action="/subscribe" method="post">
-        <input type="text" name="subscription_code" placeholder="Enter Subscription Code" required>
-        <button type="submit">Submit</button>
-    </form>
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('user_portfolio') }}">User Portfolio</a>
+        <a href="{{ url_for('master_portfolio') }}">Master Portfolio</a>
+        <a href="{{ url_for('subscribe') }}">Subscribe</a>
+        {% if 'logged_in' in session %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Register</a>
+        {% endif %}
+    </div>
+
+    <div class="container">
+        <div class="form-container">
+            <h1>Subscribe to Access Premium Content</h1>
+            {% if error %}
+                <p class="error-message">{{ error }}</p>
+            {% endif %}
+            <form action="/subscribe" method="post">
+                <input type="text" name="subscription_code" placeholder="Enter Subscription Code" required>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
-
