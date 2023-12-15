@@ -11,7 +11,12 @@ from decimal import Decimal
 import pandas as pd
 import logging
 from dotenv import load_dotenv
-load_dotenv('.env.local')
+load_dotenv('.env.development.local')
+
+
+
+
+
 
 #from flask_oauthlib.client import OAuth
 #from authlib.integrations.flask_client import OAuth
@@ -45,25 +50,32 @@ def login_google():
     redirect_uri = url_for('authorized', _external=True)
     return google.authorize_redirect(redirect_uri)
 
-@app.route('/login/authorized')
-def authorized():
-    token = google.authorize_access_token()
-    user_info = google.get('userinfo').json()
-    app.logger.info(f"Google OAuth user info: {user_info}")
 
-    user_id = get_user_id(user_info['email'])
-    if not user_id:
-        user_id = create_user(user_info['email'], binascii.hexlify(os.urandom(24)).decode())
-        app.logger.info(f"New user created with ID: {user_id}")
-    else:
-        app.logger.info(f"Existing user logged in with ID: {user_id}")
 
-    session['logged_in'] = True
-    session['user_id'] = user_id
-    session['email'] = user_info['email']
+@app.route('/master-portfolio')
+def master_portfolio():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
 
-    app.logger.info(f"Session set: {session}")
-    return redirect(url_for('user_portfolio'))
+    user_email = session.get('email')
+    subscription_code = session.get('subscription_code')  # Retrieve the code from the session
+
+    # Check if the user has a valid subscription
+    if not verify_subscription_code(user_email, subscription_code):
+        # If not, redirect to the subscription page
+        return redirect(url_for('subscribe'))
+
+    # Fetch the user ID for mastinder@yahoo.com
+    master_user_id = get_user_id('mastinder@yahoo.com')
+    if master_user_id is None:
+        return "Master user not found", 404
+
+    # Fetch the stock data for the master user
+    master_stock_data = fetch_stock_data(read_stock_purchases(master_user_id))
+
+    return render_template('master_portfolio.html', stock_data=master_stock_data)
+
+
 
 
 
@@ -75,6 +87,7 @@ def subscribe():
 
         if user_id and verify_subscription_code(session.get('email'), subscription_code):
             update_subscription_code(user_id, subscription_code)
+            session['subscription_code'] = subscription_code  # Store the code in the session
             return redirect(url_for('master_portfolio'))
         else:
             return render_template('subscribe.html', error="Invalid subscription code.")
@@ -83,20 +96,24 @@ def subscribe():
 
 
 
-@app.route('/master-portfolio')
-def master_portfolio():
-    if 'logged_in' not in session:
-        return redirect(url_for('login'))
-
+#@app.route('/master-portfolio')
+#def master_portfolio():
+    #if 'logged_in' not in session:
+     #   return redirect(url_for('login'))
+    #user_id = session.get('user_id')
+    # Check if the user has a valid subscription
+   # if not verify_subscription_code(session.get('email')):
+        # If not, redirect to the subscription page
+    #    return redirect(url_for('subscribe'))
     # Fetch the user ID for mastinder@yahoo.com
-    master_user_id = get_user_id('mastinder@yahoo.com')
-    if master_user_id is None:
-        return "Master user not found", 404
-
+   # master_user_id = get_user_id('mastinder@yahoo.com')
+   # if master_user_id is None:
+    #    return "Master user not found", 404
     # Fetch the stock data for the master user
-    master_stock_data = fetch_stock_data(read_stock_purchases(master_user_id))
+   # master_stock_data = fetch_stock_data(read_stock_purchases(master_user_id))
+   # return render_template('master_portfolio.html', stock_data=master_stock_data)
 
-    return render_template('master_portfolio.html', stock_data=master_stock_data)
+
 
 
 @app.route('/user-portfolio', methods=['GET', 'POST'])
@@ -166,24 +183,40 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+#@app.route('/', methods=['GET', 'POST'])
+#def index():
+#    if 'logged_in' not in session:
+#        return redirect(url_for('login'))
+
+#    user_id = session.get('user_id')
+#    if not user_id:
+#        # Handle the case where user_id is not found - perhaps redirect to login
+
+#        print("User ID not found in session. Redirecting to login.")
+#        return redirect(url_for('login'))
+
+#    if request.method == 'POST':
+        # Handle POST request logic here
+#        pass
+
+    # Fetch stock data for the logged-in user
+
+#    stock_data = fetch_stock_data(read_stock_purchases(user_id))
+#    return render_template('stocks.html', stock_data=stock_data)
+
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    if 'logged_in' not in session:
+    if 'logged_in' not in session or not session['logged_in']:
         return redirect(url_for('login'))
 
     user_id = session.get('user_id')
     if not user_id:
-        # Handle the case where user_id is not found - perhaps redirect to login
         print("User ID not found in session. Redirecting to login.")
         return redirect(url_for('login'))
 
-    if request.method == 'POST':
-        # Handle POST request logic here
-        pass
-
-    # Fetch stock data for the logged-in user
-    stock_data = fetch_stock_data(read_stock_purchases(user_id))
-    return render_template('stocks.html', stock_data=stock_data)
+    return redirect(url_for('user_portfolio'))
 
 
 #oauth = OAuth(app)
@@ -309,4 +342,3 @@ def get_graph():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
