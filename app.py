@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session,flash
 import os
 from db import get_subscription_code_for_user, update_subscription_code, read_stock_purchases, write_stock_purchases, get_user_id, verify_user, create_user, verify_subscription_code
 import yfinance as yf
@@ -12,6 +12,7 @@ import pandas as pd
 import logging
 from dotenv import load_dotenv
 load_dotenv('.env.development.local')
+from flask_mail import Mail, Message
 
 
 
@@ -28,8 +29,7 @@ matplotlib.use('Agg')
  
 app = Flask(__name__)
 app.secret_key = os.environ.get('bApG1HXBfOeC5JhRj_tvKA', 'your-default-secret-key')
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://default:QhYas0zXyE7A@ep-royal-thunder-45099107-pooler.us-east-1.postgres.vercel-storage.com:5432/verceldb'
-#db.init_app(app)
+
 
 
 oauth = OAuth(app)
@@ -78,6 +78,42 @@ def master_portfolio():
 
 
 
+
+# Configure email
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')  # Set your email
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')  # Set your email password
+
+mail = Mail(app)
+
+# ... existing routes ...
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    if request.method == 'POST':
+        # Get form data
+        name = request.form.get('name')
+        email = request.form.get('email')
+        message = request.form.get('message')
+
+        # Create and send the email
+        msg = Message("New Contact Form Submission",
+                      sender=app.config['MAIL_USERNAME'],
+                      recipients=[app.config['MAIL_USERNAME']],  # Email to send to
+                      body=f"Name: {name}\nEmail: {email}\nMessage: {message}")
+        mail.send(msg)
+
+        flash('Your message has been sent successfully!', 'success')
+        return redirect(url_for('contact'))
+
+    return render_template('contact.html')
+
+
+@app.route('/Aboutus')
+def aboutus():
+    return render_template('aboutus.html')
 
 @app.route('/subscribe', methods=['GET', 'POST'])
 def subscribe():
@@ -149,6 +185,9 @@ def user_portfolio():
 
     stock_data = fetch_stock_data(read_stock_purchases(user_id))
     return render_template('user_portfolio.html', stock_data=stock_data)
+
+
+
 
 
 @app.route('/login', methods=['GET', 'POST'])
