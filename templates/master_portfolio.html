@@ -93,6 +93,8 @@
         <a href="{{ url_for('user_portfolio') }}">User Portfolio</a>
         <a href="{{ url_for('master_portfolio') }}">Master Portfolio</a>
         <a href="{{ url_for('subscribe') }}">Subscribe</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+        <a href="{{ url_for('aboutus') }}">Aboutus</a>
         {% if 'logged_in' in session %}
             <a href="{{ url_for('logout') }}">Logout</a>
         {% else %}
