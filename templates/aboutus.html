@@ -37,14 +37,45 @@
             margin: 5px 0;
             line-height: 1.6;
         }
+
+        /* Navbar styles */
+        .navbar {
+            overflow: hidden;
+            background-color: #0056b3;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .navbar a {
+            display: inline-block;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #004494;
+            color: white;
+        }
     </style>
 </head>
 <body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('user_portfolio') }}">User Portfolio</a>
+        <a href="{{ url_for('master_portfolio') }}">Master Portfolio</a>
+        <a href="{{ url_for('subscribe') }}">Subscribe</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+        <a href="{{ url_for('aboutus') }}">Aboutus</a>
+    </div>
+
     <div class="container">
         <div class="about-container">
             <h1>About Us</h1>
             <p>Welcome to [Your Company or Website Name]! We are dedicated to [briefly describe your mission or what your company/website does]. Our team is committed to providing [mention your services, products, or content focus], ensuring that [describe what your target audience can expect or benefit from].</p>
-            
+
             <p>[You can add more paragraphs to elaborate on your company's history, vision, values, team, or any other aspects you wish to highlight.]</p>
 
             <p>Thank you for choosing us, and we look forward to serving you!</p>
