@@ -43,7 +43,6 @@
             margin-top: 20px;
         }
 
-        /* Additional styles for the form */
         form {
             margin-top: 20px;
         }
@@ -71,9 +70,40 @@
         button:hover {
             background-color: #004494;
         }
+
+        /* Navbar styles copied from your Login page */
+        .navbar {
+            overflow: hidden;
+            background-color: #0056b3;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .navbar a {
+            display: inline-block;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #004494;
+            color: white;
+        }
     </style>
 </head>
 <body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('user_portfolio') }}">User Portfolio</a>
+        <a href="{{ url_for('master_portfolio') }}">Master Portfolio</a>
+        <a href="{{ url_for('subscribe') }}">Subscribe</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+        <a href="{{ url_for('aboutus') }}">Aboutus</a>
+    </div>
+
     <div class="container">
         <div class="contact-container">
             <h1>Contact Us</h1>
@@ -102,15 +132,4 @@
         </div>
     </div>
 </body>
-    <!-- Navbar -->
-    <div class="navbar">
-        <a href="{{ url_for('index') }}">Home</a>
-        <a href="{{ url_for('user_portfolio') }}">User Portfolio</a>
-        <a href="{{ url_for('master_portfolio') }}">Master Portfolio</a>
-        <a href="{{ url_for('subscribe') }}">Subscribe</a>
-        <a href="{{ url_for('contact') }}">Contact</a>
-        <a href="{{ url_for('aboutus') }}">Aboutus</a>
- <a href="{{ url_for('subscribe') }}">Contact</a>
- <a href="{{ url_for('aboutus') }}">Aboutus</a>
-    </div>
 </html>
