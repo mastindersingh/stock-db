@@ -188,6 +188,30 @@ def user_portfolio():
 
 
 
+@app.route('/delete_stock', methods=['POST'])
+def delete_stock_route():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+
+    user_id = session.get('user_id')
+    if not user_id:
+        flash("User ID not found in session. Redirecting to login.", "warning")
+        return redirect(url_for('login'))
+
+    ticker = request.form.get('ticker')
+    if ticker:
+        try:
+            # Assuming delete_stock function is imported from db.py
+            delete_stock(ticker)
+            flash(f"Stock with ticker '{ticker}' has been deleted.", "success")
+        except Exception as e:
+            flash(f"An error occurred: {e}", "danger")
+    else:
+        flash("No ticker provided for deletion.", "warning")
+
+    return redirect(url_for('user_portfolio'))
+
+
 
 
 @app.route('/login', methods=['GET', 'POST'])
