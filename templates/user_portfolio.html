@@ -61,14 +61,32 @@
 
         .stock-row {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            align-items: start;
             margin-bottom: 20px;
         }
 
         .stock-details, .stock-graph {
             flex: 1;
             margin: 10px;
+        }
+
+        .stock-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .delete-btn {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background-color: #c9302c;
         }
 
         .stock-graph {
@@ -84,10 +102,9 @@
             text-decoration: underline;
         }
 
-        /* Navbar styles */
         .navbar {
             overflow: hidden;
-            background-color:  #0056b3;
+            background-color: #0056b3;
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 10px 0;
@@ -107,15 +124,13 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
     <div class="navbar">
         <a href="{{ url_for('index') }}">Home</a>
         <a href="{{ url_for('user_portfolio') }}">User Portfolio</a>
         <a href="{{ url_for('master_portfolio') }}">Master Portfolio</a>
         <a href="{{ url_for('subscribe') }}">Subscribe</a>
         <a href="{{ url_for('logout') }}">Logout</a>
-         <a href="{{ url_for('contact') }}">Contact</a>
-        <a href="{{ url_for('aboutus') }}">Aboutus</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
     </div>
 
     <div class="container">
@@ -142,7 +157,6 @@
         </div>
 
         <div class="stock-data-container">
-            <!-- Displaying Stock Data -->
             {% if stock_data %}
                 {% for ticker, data in stock_data.items() %}
                     <div class="stock-row">
@@ -154,6 +168,11 @@
                             <p>Current Price: {{ data.current_price }}</p>
                             <p>Performance: {{ data.performance }}</p>
                             <p>Percentage Change: {{ data.percentage_change }}%</p>
+
+                            <form action="{{ url_for('delete_stock_route') }}" method="post" class="delete-form">
+                                <input type="hidden" name="ticker" value="{{ ticker }}">
+                                <input type="submit" value="Delete Stock" class="delete-btn" onclick="return confirm('Are you sure you want to delete this stock?');">
+                            </form>
                         </div>
                         <div class="stock-graph">
                             <img src="data:image/png;base64,{{ data.graph }}" alt="Stock graph for {{ ticker }}">
