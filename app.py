@@ -344,11 +344,16 @@ def fetch_stock_data(stock_purchases):
         weighted_avg_price = Decimal((group['BuyPrice'] * group['Quantity']).sum()) / Decimal(int(total_quantity))
         tickerData = yf.Ticker(ticker)
         data = tickerData.history(period="max")
+
+        # Check if the data DataFrame is empty
+        if data.empty:
+            print(f"No data found for {ticker}, symbol may be delisted or invalid.")
+            continue  # Skip to the next ticker
+
         current_price = Decimal(data['Close'].iloc[-1])
         percentage_change = ((current_price - weighted_avg_price) / weighted_avg_price) * 100
         performance = "Up" if current_price > weighted_avg_price else "Down"
-        #logging.basicConfig(level=logging.DEBUG)
-        #logging.debug(f"Stock data for {ticker}: {stock_data[ticker]}")
+
         plt.figure(figsize=(10, 4))
         plt.plot(data['Close'])
         plt.title(f"{ticker} Stock Price")
@@ -378,6 +383,8 @@ def get_graph():
     graph = graph.decode('utf-8')
     buffer.close()
     return graph
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
