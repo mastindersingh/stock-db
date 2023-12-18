@@ -1,0 +1,70 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <!-- Common styles can be added here -->
+    <style>
+        /* Add common styles here, including styles for the social media bar and navbar */
+
+        .top-social-media {
+            background-color: #0056b3; /* Dark blue background */
+            color: white;
+            text-align: center;
+            padding: 5px 0;
+        }
+
+        .top-social-media a {
+            color: white;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+
+        .top-social-media a:hover {
+            text-decoration: underline;
+        }
+
+        .navbar {
+            overflow: hidden;
+            background-color: #0056b3;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .navbar a {
+            display: inline-block;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #004494;
+            color: white;
+        }
+
+        /* Other common styles */
+    </style>
+</head>
+<body>
+    <!-- Top Social Media Bar -->
+    <div class="top-social-media">
+        <a href="https://www.facebook.com" target="_blank">Facebook</a>
+        <a href="https://wa.me" target="_blank">WhatsApp</a>
+        <a href="https://www.linkedin.com" target="_blank">LinkedIn</a>
+    </div>
+
+  
+    
+
+    {% block content %}
+    {% endblock %}
+
+    <!-- Footer (if any) -->
+    <div class="footer">
+        <!-- Footer content -->
+    </div>
+</body>
+</html>
+
