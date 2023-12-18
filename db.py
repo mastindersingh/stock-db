@@ -12,6 +12,33 @@ def get_db_connection():
         port=os.environ.get("POSTGRES_PORT", "5432")  # Defaulting to 5432 if not set
     )
 
+def delete_stock(ticker):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        # Check if the stock exists
+        cursor.execute("SELECT id FROM stocks WHERE ticker = %s", (ticker,))
+        stock = cursor.fetchone()
+        if stock:
+            stock_id = stock[0]
+
+            # Delete related records from stock_purchases, stock_sales, and user_stocks
+            cursor.execute("DELETE FROM stock_purchases WHERE stock_id = %s", (stock_id,))
+            cursor.execute("DELETE FROM stock_sales WHERE stock_id = %s", (stock_id,))
+            cursor.execute("DELETE FROM user_stocks WHERE stock_id = %s", (stock_id,))
+
+            # Finally, delete the stock record
+            cursor.execute("DELETE FROM stocks WHERE id = %s", (stock_id,))
+            conn.commit()
+            print(f"Stock with ticker '{ticker}' and related records have been deleted.")
+        else:
+            print(f"No stock found with ticker '{ticker}'.")
+    except psycopg2.Error as e:
+        print(f"Database error: {e}")
+        conn.rollback()  # Rollback in case of error
+    finally:
+        conn.close()
+
 
 
 def verify_subscription_code(email, code):
