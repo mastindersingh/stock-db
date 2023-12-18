@@ -85,15 +85,21 @@
     </style>
 </head>
 <body>
+{% extends 'base.html' %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
     <!-- Navbar -->
     <div class="navbar">
         <a href="{{ url_for('index') }}">Home</a>
         <a href="{{ url_for('user_portfolio') }}">User Portfolio</a>
         <a href="{{ url_for('master_portfolio') }}">Master Portfolio</a>
         <a href="{{ url_for('subscribe') }}">Subscribe</a>
-        <a href="{{ url_for('contact') }}">Contact</a>
-        <a href="{{ url_for('aboutus') }}">Aboutus</a>
-
+ <a href="{{ url_for('subscribe') }}">Contact</a>
+ <a href="{{ url_for('aboutus') }}">Aboutus</a>
     </div>
 
     <div class="container">
@@ -109,5 +115,6 @@
             <p>Don't have an account? <a href="/register">Register here</a>.</p>
         </div>
     </div>
+{% endblock %}
 </body>
 </html>
