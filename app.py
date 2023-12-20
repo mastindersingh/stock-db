@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, session,flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 import os
-from db import get_subscription_code_for_user, update_subscription_code, read_stock_purchases, write_stock_purchases, get_user_id, verify_user, create_user, verify_subscription_code, delete_stock
+from db import delete_stock, get_subscription_code_for_user, update_subscription_code, read_stock_purchases, write_stock_purchases, get_user_id, verify_user, create_user, verify_subscription_code
 import yfinance as yf
 import matplotlib
 matplotlib.use('Agg')  # Set the backend to Agg
@@ -11,9 +11,9 @@ from decimal import Decimal
 import pandas as pd
 import logging
 from dotenv import load_dotenv
-load_dotenv('.env')
+load_dotenv('.env.development.local')
 from flask_mail import Mail, Message
-
+from requests.exceptions import HTTPError
 
 
 
@@ -29,7 +29,8 @@ matplotlib.use('Agg')
  
 app = Flask(__name__)
 app.secret_key = os.environ.get('bApG1HXBfOeC5JhRj_tvKA', 'your-default-secret-key')
-
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://default:QhYas0zXyE7A@ep-royal-thunder-45099107-pooler.us-east-1.postgres.vercel-storage.com:5432/verceldb'
+#db.init_app(app)
 
 
 oauth = OAuth(app)
@@ -78,7 +79,6 @@ def master_portfolio():
 
 
 
-
 # Configure email
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
@@ -111,9 +111,30 @@ def contact():
     return render_template('contact.html')
 
 
-@app.route('/Aboutus')
-def aboutus():
-    return render_template('aboutus.html')
+
+
+
+@app.route('/search_stock', methods=['GET', 'POST'])
+def search_stock():
+    if request.method == 'POST':
+        query = request.form.get('query')
+        stock = yf.Ticker(query)
+        try:
+            stock_info = stock.info
+            return render_template('user_portfolio.html', stock_info=stock_info)
+        except HTTPError:
+            flash(f"Stock symbol '{query}' not found.", "danger")
+        except Exception as e:
+            flash(f"An error occurred: {e}", "danger")
+        return redirect(url_for('user_portfolio'))
+    return redirect(url_for('user_portfolio'))
+
+@app.route('/stock_info')
+def stock_info():
+    # Your code here
+    return render_template('stock_info.html')
+
+
 
 @app.route('/subscribe', methods=['GET', 'POST'])
 def subscribe():
@@ -129,6 +150,36 @@ def subscribe():
             return render_template('subscribe.html', error="Invalid subscription code.")
 
     return render_template('subscribe.html')
+
+
+
+@app.route('/Aboutus')
+def aboutus():
+    return render_template('aboutus.html')
+
+
+@app.route('/delete_stock', methods=['POST'])
+def delete_stock_route():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+
+    user_id = session.get('user_id')
+    if not user_id:
+        flash("User ID not found in session. Redirecting to login.", "warning")
+        return redirect(url_for('login'))
+
+    ticker = request.form.get('ticker')
+    if ticker:
+        try:
+            # Assuming delete_stock function is imported from db.py
+            delete_stock(ticker)
+            flash(f"Stock with ticker '{ticker}' has been deleted.", "success")
+        except Exception as e:
+            flash(f"An error occurred: {e}", "danger")
+    else:
+        flash("No ticker provided for deletion.", "warning")
+
+    return redirect(url_for('user_portfolio'))
 
 
 
@@ -185,33 +236,6 @@ def user_portfolio():
 
     stock_data = fetch_stock_data(read_stock_purchases(user_id))
     return render_template('user_portfolio.html', stock_data=stock_data)
-
-
-
-@app.route('/delete_stock', methods=['POST'])
-def delete_stock_route():
-    if 'logged_in' not in session:
-        return redirect(url_for('login'))
-
-    user_id = session.get('user_id')
-    if not user_id:
-        flash("User ID not found in session. Redirecting to login.", "warning")
-        return redirect(url_for('login'))
-
-    ticker = request.form.get('ticker')
-    if ticker:
-        try:
-            # Assuming delete_stock function is imported from db.py
-            delete_stock(ticker)
-            flash(f"Stock with ticker '{ticker}' has been deleted.", "success")
-        except Exception as e:
-            flash(f"An error occurred: {e}", "danger")
-    else:
-        flash("No ticker provided for deletion.", "warning")
-
-    return redirect(url_for('user_portfolio'))
-
-
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -359,6 +383,7 @@ def add_stock():
 
     return render_template('stocks.html', stock_data=stock_data)
 
+
 def fetch_stock_data(stock_purchases):
     stock_data = {}
     for ticker, group in stock_purchases.groupby('Ticker'):
@@ -407,7 +432,6 @@ def get_graph():
     buffer.close()
     plt.close()
     return graph
-
 
 
 
