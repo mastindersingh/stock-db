@@ -359,8 +359,6 @@ def add_stock():
 
     return render_template('stocks.html', stock_data=stock_data)
 
-
-
 def fetch_stock_data(stock_purchases):
     stock_data = {}
     for ticker, group in stock_purchases.groupby('Ticker'):
@@ -383,7 +381,7 @@ def fetch_stock_data(stock_purchases):
         plt.title(f"{ticker} Stock Price")
         plt.xlabel("Date")
         plt.ylabel("Price")
-        graph = get_graph
+        graph = get_graph()
         plt.close()
 
         stock_data[ticker] = {
@@ -409,7 +407,9 @@ def get_graph():
     buffer.close()
     plt.close()
     return graph
-   
+
+
+
 
 
 
