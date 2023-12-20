@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>User Portfolio</title>
+    <title>User Portfolio and Stock Information</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -27,35 +27,50 @@
             margin-bottom: 20px;
         }
 
-        h1, h2 {
+        h1, h2, h3 {
             color: #0056b3;
-            margin-bottom: 20px;
         }
 
-        .form-container {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
+        p {
+            line-height: 1.6;
         }
 
-        .form-container label, .form-container input {
+        .navbar {
+            background-color: #0056b3;
+            overflow: hidden;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        .navbar a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .navbar a:hover {
+            background-color: #004494;
+        }
+
+        .form-container label, .form-container input, .form-container button {
             margin-right: 10px;
         }
 
-        input[type=text], input[type=date], input[type=number], input[type=submit] {
+        input[type=text], input[type=date], input[type=number], input[type=submit], button {
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
             box-sizing: border-box;
         }
 
-        input[type=submit] {
+        input[type=submit], button {
             background-color: #0056b3;
             color: white;
             cursor: pointer;
         }
 
-        input[type=submit]:hover {
+        input[type=submit]:hover, button:hover {
             background-color: #004494;
         }
 
@@ -93,75 +108,55 @@
             text-align: center;
         }
 
-        a {
-            color: #007bff;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        .navbar {
-            overflow: hidden;
-            background-color: #0056b3;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 10px 0;
-        }
-
-        .navbar a {
-            display: inline-block;
-            color: white;
-            padding: 8px 16px;
-            text-decoration: none;
-        }
-
-        .navbar a:hover {
-            background-color: #004494;
-            color: black;
+        .stock-graph img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
     <div class="navbar">
-        <a href="{{ url_for('index') }}">Home</a>
-        <a href="{{ url_for('user_portfolio') }}">User Portfolio</a>
-        <a href="{{ url_for('master_portfolio') }}">Master Portfolio</a>
-        <a href="{{ url_for('subscribe') }}">Subscribe</a>
-        <a href="{{ url_for('logout') }}">Logout</a>
-        <a href="{{ url_for('contact') }}">Contact</a>
+        <a href="/">Home</a>
+        <a href="/search_stock">Search Stocks</a>
+        <a href="/master_portfolio">Master Portfolio</a>
+        <a href="/subscribe">Subscribe</a>
+        <a href="/blog">Blog</a>
     </div>
 
     <div class="container">
         <div class="header">
-            <h1>User Portfolio</h1>
+            <h1>User Portfolio and Stock Information</h1>
         </div>
 
+        <!-- Stock Search Form -->
         <div class="form-container">
-            <form action="{{ url_for('user_portfolio') }}" method="post">
-                <label for="ticker">Ticker:</label>
-                <input type="text" id="ticker" name="ticker" required>
-
-                <label for="buy_date">Buy Date:</label>
-                <input type="date" id="buy_date" name="buy_date" required>
-
-                <label for="buy_price">Buy Price:</label>
-                <input type="number" id="buy_price" name="buy_price" step="0.01" required>
-
-                <label for="quantity">Quantity:</label>
-                <input type="number" id="quantity" name="quantity" required>
-
-                <input type="submit" value="Add Stock">
+            <h2>Search for Stock Information</h2>
+            <form action="{{ url_for('search_stock') }}" method="post">
+                <label for="query">Stock Symbol:</label>
+                <input type="text" id="query" name="query" required>
+                <input type="submit" value="Search">
             </form>
         </div>
 
+        <!-- Display Search Results -->
+        {% if stock_info %}
+            <div class="stock-data-container">
+                <h2>Search Results</h2>
+                <p>Stock Name: {{ stock_info.get('longName', 'Not Available') }}</p>
+                <p>Current Price: {{ stock_info.get('currentPrice', 'Not Available') }}</p>
+                <!-- Add more details as needed -->
+            </div>
+        {% endif %}
+
+        <!-- Existing Stock Data Container -->
         <div class="stock-data-container">
+            <h2>Your Stock Portfolio</h2>
             {% if stock_data %}
                 {% for ticker, data in stock_data.items() %}
                     <div class="stock-row">
                         <div class="stock-details">
-                            <h2>{{ ticker }}</h2>
+                            <h3>{{ ticker }}</h3>
                             <p>Earliest Buy Date: {{ data.earliest_buy_date }}</p>
                             <p>Weighted Average Buy Price: 
                                 {% if ticker.lower().endswith('.ns') %}
@@ -180,11 +175,6 @@
                             </p>
                             <p>Performance: {{ data.performance }}</p>
                             <p>Percentage Change: {{ data.percentage_change }}%</p>
-
-                            <form action="{{ url_for('delete_stock_route') }}" method="post" class="delete-form">
-                                <input type="hidden" name="ticker" value="{{ ticker }}">
-                                <input type="submit" value="Delete Stock" class="delete-btn" onclick="return confirm('Are you sure you want to delete this stock?');">
-                            </form>
                         </div>
                         <div class="stock-graph">
                             <img src="data:image/png;base64,{{ data.graph }}" alt="Stock graph for {{ ticker }}">
@@ -195,6 +185,19 @@
                 <p>No stock data available.</p>
             {% endif %}
         </div>
+
+        <!-- Additional Information Section -->
+        <h2>Search Stocks on Yahoo Finance</h2>
+        <p>Explore the world of stocks by searching for real-time information on Yahoo Finance. Get detailed insights into stock prices, market trends, and financial news. <a href="/search_stock">Start searching now.</a></p>
+
+        <h2>Exclusive Access to Master Portfolio</h2>
+        <p>Subscribed members have exclusive access to our Master Portfolio. This feature allows you to view our top-performing stocks and strategies for higher returns in the market. <a href="/master_portfolio">View Master Portfolio.</a></p>
+
+        <h2>Educational Resources and Expert Insights</h2>
+        <p>Gain access to our extensive library of study materials, including PDFs and blogs, where we share our insights on why we buy or sell certain stocks. These resources are invaluable for both beginners and experienced investors. <a href="/resources">Access educational resources.</a></p>
+
+        <h3>Not a Subscriber Yet?</h3>
+        <p>Join our community to unlock all features and stay ahead in the stock market. <a href="/subscribe">Subscribe now.</a></p>
     </div>
 </body>
 </html>
