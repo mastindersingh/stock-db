@@ -383,7 +383,8 @@ def fetch_stock_data(stock_purchases):
         plt.title(f"{ticker} Stock Price")
         plt.xlabel("Date")
         plt.ylabel("Price")
-        graph = get_graph()
+        graph = get_graph
+        plt.close()
 
         stock_data[ticker] = {
             'data': data,
@@ -406,7 +407,9 @@ def get_graph():
     graph = base64.b64encode(image_png)
     graph = graph.decode('utf-8')
     buffer.close()
+    plt.close()
     return graph
+   
 
 
 
