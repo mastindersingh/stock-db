@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 load_dotenv('.env.development.local')
 from flask_mail import Mail, Message
 from requests.exceptions import HTTPError
+from models import BlogPost
 
 
 
@@ -134,7 +135,10 @@ def stock_info():
     # Your code here
     return render_template('stock_info.html')
 
-
+@app.route('/blog')
+def blog():
+    posts = BlogPost.get_all_posts()  # Use the static method to fetch all blog posts
+    return render_template('blog.html', posts=posts)
 
 @app.route('/subscribe', methods=['GET', 'POST'])
 def subscribe():
