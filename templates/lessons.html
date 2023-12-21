@@ -1,112 +1,22 @@
+<!-- templates/lessons.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f2f2f2;
-            text-align: center;
-            padding: 50px;
-            color: #333;
-        }
-
-        .container {
-            max-width: 400px;
-            margin: auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        h1 {
-            color: #0056b3;
-            margin-bottom: 30px;
-        }
-
-        input[type=email], input[type=password] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        button {
-            width: 100%;
-            background-color: #0056b3;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #004494;
-        }
-
-        .register-container {
-            margin-top: 20px;
-        }
-
-        .register-container a {
-            color: #007bff;
-            text-decoration: none;
-        }
-
-        .register-container a:hover {
-            text-decoration: underline;
-        }
-
-        /* Navbar styles */
-        .navbar {
-            overflow: hidden;
-            background-color: #0056b3;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: center;
-            padding: 10px 0;
-        }
-
-        .navbar a {
-            display: inline-block;
-            color: white;
-            padding: 8px 16px;
-            text-decoration: none;
-        }
-
-        .navbar a:hover {
-            background-color: #004494;
-            color: white;
-        }
-    </style>
+    {% extends "base.html" %}
+    {% block title %}Stock Trading Lessons{% endblock %}
 </head>
 <body>
-{% extends 'base.html' %}
-
-{% block title %}
-Login
-{% endblock %}
-
-{% block content %}
-    
-
-    <div class="container">
-        <h1>Login</h1>
-        <form method="post" action="/login">
-            <input type="email" name="email" placeholder="Email">
-            <input type="password" name="password" placeholder="Password">
-            <button type="submit">Login</button>
-        </form>
-
-        <div class="register-container">
-            <!-- Link to Registration Page -->
-            <p>Don't have an account? <a href="/register">Register here</a>.</p>
-        </div>
-    </div>
-{% endblock %}
+    {% block content %}
+    <main>
+        <!-- Lesson Content Here -->
+        {% for lesson in lessons %}
+        <article>
+            <h2>{{ lesson.title }}</h2>
+            <p>{{ lesson.content }}</p>
+            <!-- You can add more lesson details here as needed -->
+        </article>
+        {% endfor %}
+    </main>
+    {% endblock %}
 </body>
 </html>
