@@ -3,10 +3,12 @@
 <html>
 <head>
     <title>{% block title %}{% endblock %}</title>
-    <!-- Common styles can be added here -->
-    <style>
-        /* Add common styles here, including styles for the social media bar and navbar */
 
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Inline styles -->
+    <style>
         .top-social-media {
             background-color: #0056b3; /* Dark blue background */
             color: white;
@@ -44,27 +46,47 @@
             color: white;
         }
 
-        /* Other common styles */
+        /* Additional common styles */
     </style>
 </head>
 <body>
     <!-- Top Social Media Bar -->
     <div class="top-social-media">
-        <a href="https://www.facebook.com/stocksadvice/" target="_blank">Facebook</a>
+        <a href="https://www.facebook.com" target="_blank">Facebook</a>
         <a href="https://wa.me" target="_blank">WhatsApp</a>
         <a href="https://www.linkedin.com" target="_blank">LinkedIn</a>
     </div>
 
-  
-    
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('user_portfolio') }}">User Portfolio</a>
+        <a href="{{ url_for('master_portfolio') }}">Master Portfolio</a>
+        <a href="{{ url_for('subscribe') }}">Subscribe</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+        <a href="{{ url_for('aboutus') }}">About Us</a>
+        <a href="{{ url_for('show_lessons') }}">Lessons</a>
+    </div>
 
-    {% block content %}
-    {% endblock %}
+    <!-- Main Content Block -->
+    <div class="main-body">
+        {% block content %}
+        {% endblock %}
+    </div>
 
-    <!-- Footer (if any) -->
+    <!-- Sidebar for Stock Recommendations -->
+    <div class="sidebar">
+        <div id="stock-recommendations">
+            <!-- Stock recommendations will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Footer -->
     <div class="footer">
         <!-- Footer content -->
     </div>
+
+    <!-- Link to external JavaScript file -->
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
 </body>
 </html>
-
