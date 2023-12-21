@@ -15,7 +15,7 @@ load_dotenv('.env.development.local')
 from flask_mail import Mail, Message
 from requests.exceptions import HTTPError
 from models import BlogPost
-
+from lesson import lessons
 
 
 
@@ -52,6 +52,22 @@ def login_google():
     redirect_uri = url_for('authorized', _external=True)
     return google.authorize_redirect(redirect_uri)
 
+def get_stock_recommendations():
+    # Replace this with actual logic to fetch data from your database
+    return [
+        {'name': 'Apple Inc', 'price': 150, 'recommendation': 'Buy'},
+        {'name': 'Microsoft Corp', 'price': 250, 'recommendation': 'Hold'}
+    ]
+
+
+@app.route('/blog')
+def blog():
+    posts = BlogPost.get_all_posts()  # Use the static method to fetch all blog posts
+    return render_template('blog.html', posts=posts)
+
+@app.route('/lessons')
+def show_lessons():
+    return render_template('lessons.html', lessons=lessons)
 
 
 @app.route('/master-portfolio')
@@ -135,10 +151,7 @@ def stock_info():
     # Your code here
     return render_template('stock_info.html')
 
-@app.route('/blog')
-def blog():
-    posts = BlogPost.get_all_posts()  # Use the static method to fetch all blog posts
-    return render_template('blog.html', posts=posts)
+
 
 @app.route('/subscribe', methods=['GET', 'POST'])
 def subscribe():
@@ -443,3 +456,4 @@ def get_graph():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
