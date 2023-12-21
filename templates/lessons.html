@@ -1,0 +1,23 @@
+<!-- templates/lessons.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% extends "base.html" %}
+    {% block title %}Stock Trading Lessons{% endblock %}
+</head>
+<body>
+    {% block content %}
+    <main>
+        <!-- Lesson Content Here -->
+        {% for lesson in lessons %}
+        <article>
+            <h2>{{ lesson.title }}</h2>
+            <p>{{ lesson.content }}</p>
+            <!-- You can add more lesson details here as needed -->
+        </article>
+        {% endfor %}
+    </main>
+    {% endblock %}
+</body>
+</html>
+
