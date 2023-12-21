@@ -128,6 +128,23 @@
         <div class="header">
             <h1>User Portfolio and Stock Information</h1>
         </div>
+        <div class="form-container">
+            <form action="{{ url_for('user_portfolio') }}" method="post">
+                <label for="ticker">Ticker:</label>
+                <input type="text" id="ticker" name="ticker" required>
+
+                <label for="buy_date">Buy Date:</label>
+                <input type="date" id="buy_date" name="buy_date" required>
+
+                <label for="buy_price">Buy Price:</label>
+                <input type="number" id="buy_price" name="buy_price" step="0.01" required>
+
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" required>
+
+                <input type="submit" value="Add Stock">
+            </form>
+        </div>
 
         <!-- Stock Search Form -->
         <div class="form-container">
