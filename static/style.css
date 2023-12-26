@@ -1,0 +1,40 @@
+body {
+    font-family: Arial, sans-serif;
+    /* Other body styles */
+}
+
+.blog-header {
+    text-align: center;
+    padding: 20px;
+    /* Additional styling */
+}
+
+.blog-posts .post {
+    background-color: #f4f4f4;
+    margin: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    /* Additional styling */
+}
+
+.post h2 {
+    color: #0056b3;
+    /* Additional styling */
+}
+
+.post .post-date {
+    font-style: italic;
+    color: #888;
+    /* Additional styling */
+}
+
+.read-more {
+    color: #007bff;
+    text-decoration: none;
+    /* Additional styling */
+}
+
+.read-more:hover {
+    text-decoration: underline;
+}
+
