@@ -142,35 +142,29 @@ def search_stock():
             flash("Please enter a stock symbol.", "danger")
         else:
             try:
-                # Fetch stock data using pandas_datareader
-                stock_data = pdr.get_data_yahoo(query, period="1y")
-    
-                if not stock_data.empty:
-                    # Create a stock object using yfinance
-                    stock = yf.Ticker(query)
-                    
-                    # Get some information about the stock
-                    stock_info = {
-                        'symbol': query,
-                        'stockName': stock.info.get('shortName', 'N/A'),
-                        'currentPrice': stock.info.get('regularMarketPrice', 'N/A'),
-                        'sector': stock.info.get('sector', 'N/A'),
-                        'marketCap': stock.info.get('marketCap', 'N/A'),
-                        'dividendYield': stock.info.get('dividendYield', 'N/A'),
-                        'averageVolume': stock.info.get('averageVolume', 'N/A'),
-                        'fiftyTwoWeekHigh': stock_data['Adj Close'].max(),
-                        'fiftyTwoWeekLow': stock_data['Adj Close'].min()
-                    }
-    
-                    return render_template('user_portfolio.html', stock_info=stock_info)
+                # Create a stock object using yfinance
+                stock = yf.Ticker(query)
 
-                else:
-                    flash(f"Stock symbol '{query}' not found.", "danger")
-    
+                # Get some information about the stock
+                stock_info = {
+                    'symbol': query,
+                    'stockName': stock.info.get('shortName', 'N/A'),
+                    'currentPrice': stock.info.get('regularMarketPrice', 'N/A'),
+                    'sector': stock.info.get('sector', 'N/A'),
+                    'marketCap': stock.info.get('marketCap', 'N/A'),
+                    'dividendYield': stock.info.get('dividendYield', 'N/A'),
+                    'averageVolume': stock.info.get('averageVolume', 'N/A'),
+                    'fiftyTwoWeekHigh': stock.history(period="1y")['Adj Close'].max(),
+                    'fiftyTwoWeekLow': stock.history(period="1y")['Adj Close'].min()
+                }
+
+                return render_template('user_portfolio.html', stock_info=stock_info)
+
             except yf_exceptions.YFinanceError as e:
                 flash(f"An error occurred: {e}", "danger")
 
     return render_template('user_portfolio.html', stock_info=stock_info)
+
 
 
 
