@@ -16,8 +16,9 @@ from flask_mail import Mail, Message
 from requests.exceptions import HTTPError
 from models import BlogPost
 from lesson import lessons
-
-
+import yfinance.exceptions as yf_exceptions
+from pandas_datareader import data as pdr
+yf.pdr_override()
 
 
 #from flask_oauthlib.client import OAuth
@@ -130,26 +131,81 @@ def contact():
 
 
 
-
 @app.route('/search_stock', methods=['GET', 'POST'])
 def search_stock():
+    stock_info = None
+
     if request.method == 'POST':
         query = request.form.get('query')
-        stock = yf.Ticker(query)
-        try:
-            stock_info = stock.info
-            return render_template('user_portfolio.html', stock_info=stock_info)
-        except HTTPError:
-            flash(f"Stock symbol '{query}' not found.", "danger")
-        except Exception as e:
-            flash(f"An error occurred: {e}", "danger")
-        return redirect(url_for('user_portfolio'))
-    return redirect(url_for('user_portfolio'))
+
+        if not query:
+            flash("Please enter a stock symbol.", "danger")
+        else:
+            try:
+                # Fetch stock data using pandas_datareader
+                stock_data = pdr.get_data_yahoo(query, period="1y")
+    
+                if not stock_data.empty:
+                    # Create a stock object using yfinance
+                    stock = yf.Ticker(query)
+                    
+                    # Get some information about the stock
+                    stock_info = {
+                        'symbol': query,
+                        'stockName': stock.info.get('shortName', 'N/A'),
+                        'currentPrice': stock.info.get('regularMarketPrice', 'N/A'),
+                        'sector': stock.info.get('sector', 'N/A'),
+                        'marketCap': stock.info.get('marketCap', 'N/A'),
+                        'dividendYield': stock.info.get('dividendYield', 'N/A'),
+                        'averageVolume': stock.info.get('averageVolume', 'N/A'),
+                        'fiftyTwoWeekHigh': stock_data['Adj Close'].max(),
+                        'fiftyTwoWeekLow': stock_data['Adj Close'].min()
+                    }
+    
+                    return render_template('user_portfolio.html', stock_info=stock_info)
+
+                else:
+                    flash(f"Stock symbol '{query}' not found.", "danger")
+    
+            except yf_exceptions.YFinanceError as e:
+                flash(f"An error occurred: {e}", "danger")
+
+    return render_template('user_portfolio.html', stock_info=stock_info)
+
+
+
+
+
+
 
 @app.route('/stock_info')
 def stock_info():
-    # Your code here
-    return render_template('stock_info.html')
+    query = request.args.get('symbol')
+
+    if not query:
+        flash("No stock symbol provided.", "danger")
+        return redirect(url_for('search_stock'))
+
+    try:
+        stock = yf.Ticker(query)
+        stock_info = stock.info
+
+        if stock_info:
+            return render_template('stock_info.html', stock_info=stock_info)
+        else:
+            flash(f"Stock symbol '{query}' not found.", "danger")
+    except HTTPError:
+        flash(f"Stock symbol '{query}' not found.", "danger")
+    except Exception as e:
+        flash(f"An error occurred: {e}", "danger")
+
+    return redirect(url_for('search_stock'))
+
+
+
+
+
+
 
 
 
