@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>Search Stock</title>
@@ -15,14 +16,24 @@
     </form>
 
     <!-- Display Search Results -->
+
+<!-- Display Search Results -->
     {% if stock_info %}
         <div>
             <h2>Stock Information for {{ stock_info.get('symbol', 'Unknown') }}</h2>
             <p>Name: {{ stock_info.get('longName', 'Not Available') }}</p>
             <p>Price: {{ stock_info.get('currentPrice', 'Not Available') }}</p>
+            <p>Sector: {{ stock_info.get('sector', 'Not Available') }}</p>
+            <p>Market Cap: {{ stock_info.get('marketCap', 'Not Available') }}</p>
+            <p>Dividend Yield: {{ stock_info.get('dividendYield', 'Not Available') }}</p>
+            <p>Average Volume: {{ stock_info.get('averageVolume', 'Not Available') }}</p>
+            <p>52 Week High: {{ stock_info.get('fiftyTwoWeekHigh', 'Not Available') }}</p>
+            <p>52 Week Low: {{ stock_info.get('fiftyTwoWeekLow', 'Not Available') }}</p>
             <!-- More stock details -->
         </div>
     {% endif %}
+
+
 
     <!-- Additional content -->
 </body>
