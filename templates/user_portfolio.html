@@ -190,6 +190,7 @@
                                     ${{ data.current_price }}
                                 {% endif %}
                             </p>
+                            <p>Sector: {{ data.get('sector', 'Not Available') }}</p>
                             <p>Performance: {{ data.performance }}</p>
                             <p>Percentage Change: {{ data.percentage_change }}%</p>
                         </div>
