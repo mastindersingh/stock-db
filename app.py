@@ -22,7 +22,7 @@ from lesson import lessons
 import yfinance.exceptions as yf_exceptions
 from pandas_datareader import data as pdr
 yf.pdr_override()
-from model1 import db, User
+
 
 #from flask_oauthlib.client import OAuth
 #from authlib.integrations.flask_client import OAuth
