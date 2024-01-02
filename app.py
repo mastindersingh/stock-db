@@ -365,6 +365,11 @@ def user_portfolio():
         write_stock_purchases(user_id, new_stock_data)
 
     stock_data = fetch_stock_data(read_stock_purchases(user_id))
+    for ticker in stock_data:
+        stock = yf.Ticker(ticker)
+        stock_info = stock.info
+        sector = stock_info.get('sector', 'Not Available')
+        stock_data[ticker]['sector'] = sector
     return render_template('user_portfolio.html', stock_data=stock_data)
 
 
