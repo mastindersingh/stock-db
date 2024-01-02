@@ -3,7 +3,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import os
-from db import get_google_user, create_google_user, delete_stock, get_subscription_code_for_user, update_subscription_code, read_stock_purchases, write_stock_purchases, get_user_id, verify_user, create_user, verify_subscription_code
+from db import delete_stock, get_subscription_code_for_user, update_subscription_code, read_stock_purchases, write_stock_purchases, get_user_id, verify_user, create_user, verify_subscription_code
 import yfinance as yf
 import matplotlib
 matplotlib.use('Agg')  # Set the backend to Agg
