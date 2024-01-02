@@ -1,6 +1,9 @@
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import os
-from db import delete_stock, get_subscription_code_for_user, update_subscription_code, read_stock_purchases, write_stock_purchases, get_user_id, verify_user, create_user, verify_subscription_code
+from db import get_google_user, create_google_user, delete_stock, get_subscription_code_for_user, update_subscription_code, read_stock_purchases, write_stock_purchases, get_user_id, verify_user, create_user, verify_subscription_code
 import yfinance as yf
 import matplotlib
 matplotlib.use('Agg')  # Set the backend to Agg
@@ -19,7 +22,7 @@ from lesson import lessons
 import yfinance.exceptions as yf_exceptions
 from pandas_datareader import data as pdr
 yf.pdr_override()
-
+from model1 import db, User
 
 #from flask_oauthlib.client import OAuth
 #from authlib.integrations.flask_client import OAuth
@@ -28,30 +31,33 @@ import binascii
 from authlib.integrations.flask_client import OAuth
 # Configure Matplotlib
 matplotlib.use('Agg')
- 
+from authlib.integrations.base_client.errors import OAuthError  # Add this import 
 app = Flask(__name__)
 app.secret_key = os.environ.get('bApG1HXBfOeC5JhRj_tvKA', 'your-default-secret-key')
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://default:QhYas0zXyE7A@ep-royal-thunder-45099107-pooler.us-east-1.postgres.vercel-storage.com:5432/verceldb'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://default:QhYas0zXyE7A@ep-royal-thunder-45099107-pooler.us-east-1.postgres.vercel-storage.com:5432/verceldb'
 #db.init_app(app)
+from authlib.integrations.base_client.errors import OAuthError  # Add this import
+import uuid  # Add this import at the beginning of your script
 
+app.config['SESSION_COOKIE_SECURE'] = False
 
-oauth = OAuth(app)
+#oauth = OAuth(app)
 
-google = oauth.register(
-    name='google',
-    client_id='72321166098-rqs54h296h3pp6clb1h19cn7bp4rp8rn.apps.googleusercontent.com',
-    client_secret='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',
-    access_token_url='https://accounts.google.com/o/oauth2/token',
-    authorize_url='https://accounts.google.com/o/oauth2/auth',
-    api_base_url='https://www.googleapis.com/oauth2/v1/',
-    jwks_uri='https://www.googleapis.com/oauth2/v3/certs',
-    client_kwargs={'scope': 'openid email profile'},
-)
+#google = oauth.register(
+    #name='google',
+    #client_id='72321166098-rqs54h296h3pp6clb1h19cn7bp4rp8rn.apps.googleusercontent.com',
+    #client_secret='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',
+    #access_token_url='https://accounts.google.com/o/oauth2/token',
+    #authorize_url='https://accounts.google.com/o/oauth2/auth',
+    #api_base_url='https://www.googleapis.com/oauth2/v1/',
+    #jwks_uri='https://www.googleapis.com/oauth2/v3/certs',
+    #client_kwargs={'scope': 'openid email profile'},
+#)
 
-@app.route('/login/google')
-def login_google():
-    redirect_uri = url_for('authorized', _external=True)
-    return google.authorize_redirect(redirect_uri)
+#@app.route('/login/google')
+#def login_google():
+    #redirect_uri = url_for('authorized', _external=True)
+    #return google.authorize_redirect(redirect_uri)
 
 def get_stock_recommendations():
     # Replace this with actual logic to fetch data from your database
@@ -65,6 +71,10 @@ def get_stock_recommendations():
 def blog():
     posts = BlogPost.get_all_posts()  # Use the static method to fetch all blog posts
     return render_template('blog.html', posts=posts)
+
+@app.route('/video_gallery')
+def video_gallery():
+    return render_template('video_gallery.html')
 
 @app.route('/lessons')
 def show_lessons():
@@ -131,6 +141,10 @@ def contact():
 
 
 
+
+
+
+
 @app.route('/search_stock', methods=['GET', 'POST'])
 def search_stock():
     stock_info = None
@@ -144,26 +158,48 @@ def search_stock():
             try:
                 # Create a stock object using yfinance
                 stock = yf.Ticker(query)
+                stock_info = stock.info
 
-                # Get some information about the stock
-                stock_info = {
-                    'symbol': query,
-                    'stockName': stock.info.get('shortName', 'N/A'),
-                    'currentPrice': stock.info.get('regularMarketPrice', 'N/A'),
-                    'sector': stock.info.get('sector', 'N/A'),
-                    'marketCap': stock.info.get('marketCap', 'N/A'),
-                    'dividendYield': stock.info.get('dividendYield', 'N/A'),
-                    'averageVolume': stock.info.get('averageVolume', 'N/A'),
-                    'fiftyTwoWeekHigh': stock.history(period="1y")['Adj Close'].max(),
-                    'fiftyTwoWeekLow': stock.history(period="1y")['Adj Close'].min()
-                }
+                # Check if the stock information is valid
+                if stock_info and 'regularMarketPrice' in stock_info:
+                    # Additional data fetching
+                    hist = stock.history(period="1mo")
+                    actions = stock.actions
+                    dividends = stock.dividends
+                    splits = stock.splits
+                    financials = stock.financials
+                    major_holders = stock.major_holders
+                    institutional_holders = stock.institutional_holders
+                    earnings_dates = stock.earnings_dates
+                    isin = stock.isin if 'isin' in stock_info else 'N/A'
+                    options = stock.options
+                    news = stock.news
 
-                return render_template('user_portfolio.html', stock_info=stock_info)
+                    # Combine all data into stock_info
+                    stock_info.update({
+                        'history': hist.to_dict(),
+                        'actions': actions.to_dict(),
+                        'dividends': dividends.to_dict(),
+                        'splits': splits.to_dict(),
+                        'financials': financials.to_dict(),
+                        'major_holders': major_holders,
+                        'institutional_holders': institutional_holders,
+                        'earnings_dates': earnings_dates,
+                        'isin': isin,
+                        'options': options,
+                        'news': news
+                    })
 
-            except yf_exceptions.YFinanceError as e:
+                    return render_template('user_portfolio.html', stock_info=stock_info)
+                else:
+                    flash(f"Stock symbol '{query}' not found.", "danger")
+
+            except Exception as e:  # Catching a general exception
                 flash(f"An error occurred: {e}", "danger")
 
     return render_template('user_portfolio.html', stock_info=stock_info)
+
+
 
 
 
@@ -184,7 +220,35 @@ def stock_info():
         stock = yf.Ticker(query)
         stock_info = stock.info
 
-        if stock_info:
+        if stock_info and 'regularMarketPrice' in stock_info:
+            # Fetch additional data
+            hist = stock.history(period="1mo")
+            actions = stock.actions
+            dividends = stock.dividends
+            splits = stock.splits
+            financials = stock.financials
+            major_holders = stock.major_holders
+            institutional_holders = stock.institutional_holders
+            earnings_dates = stock.earnings_dates
+            isin = stock.isin if 'isin' in stock_info else 'N/A'
+            options = stock.options
+            news = stock.news
+
+            # Combine all data into stock_info
+            stock_info.update({
+                'history': hist.to_dict(),
+                'actions': actions.to_dict(),
+                'dividends': dividends.to_dict(),
+                'splits': splits.to_dict(),
+                'financials': financials.to_dict(),
+                'major_holders': major_holders,
+                'institutional_holders': institutional_holders,
+                'earnings_dates': earnings_dates,
+                'isin': isin,
+                'options': options,
+                'news': news
+            })
+
             return render_template('stock_info.html', stock_info=stock_info)
         else:
             flash(f"Stock symbol '{query}' not found.", "danger")
@@ -194,7 +258,6 @@ def stock_info():
         flash(f"An error occurred: {e}", "danger")
 
     return redirect(url_for('search_stock'))
-
 
 
 
@@ -373,47 +436,56 @@ def index():
     return redirect(url_for('user_portfolio'))
 
 
-#oauth = OAuth(app)
-
-# Google OAuth Configuration with Authlib
-#google = oauth.register(
-#    name='google',
-    #client_id='72321166098-1kb2nesvub2drdp6dqhmjir92uei1sce.apps.googleusercontent.com',
-    #client_secret='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',
- #   client_id='72321166098-rqs54h296h3pp6clb1h19cn7bp4rp8rn.apps.googleusercontent.com',
- #   client_secret='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',
- #   access_token_url='https://accounts.google.com/o/oauth2/token',
- #   authorize_url='https://accounts.google.com/o/oauth2/auth',
- #   api_base_url='https://www.googleapis.com/oauth2/v1/',
- #   client_kwargs={'scope': 'email'}i)
-
-#def google_login():
-#    return google.authorize(callback=url_for('authorized', _external=True))
 
 
-#@app.route('/login/authorized')
-#def authorized():
-#    token = google.authorize_access_token()
-#    user_info = google.get('userinfo').json()
+# Google OAuth Setup
 
-    # Example: Check if user exists in your database
-#    user = User.query.filter_by(email=user_info['email']).first()
-#    if not user:
-        # User doesn't exist, so create a new user
-#        user = User(email=user_info['email'])
-#        db.session.add(user)
-#        db.session.commit()
+oauth = OAuth(app)
+google = oauth.register(
+    name='google',
+    client_id='995479100873-lv8vmhh52pg54k6smle00t4k3cihvm5p.apps.googleusercontent.com',
+    client_secret='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',
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    api_base_url='https://www.googleapis.com/oauth2/v1/',
+    client_kwargs={'scope': 'email profile'})
 
-    # Set user information in session
-#    session['user_id'] = user.id
-#    session['email'] = user.email
 
-    # Redirect to a dashboard or home page
-#    return redirect(url_for('dashboard'))
-#@app.route('/google-login')
-#def google_login():
-#    redirect_uri = url_for('authorized', _external=True)
-#    return google.authorize_redirect(redirect_uri)
+
+
+
+
+
+@app.route('/google-login')
+def google_login():
+    
+    redirect_uri = url_for('authorized', _external=True)
+    return oauth.google.authorize_redirect(redirect_uri)
+
+
+
+@app.route('/login/authorized')
+def authorized():
+    token = oauth.google.authorize_access_token()
+    user_info = oauth.google.get('userinfo').json()
+    
+    user = get_google_user(user_info['email'])
+    if not user:
+        create_google_user(user_info['email'], user_info.get('id'))
+        user = get_google_user(user_info['email']) 
+
+    if user:
+       logging.debug(f"User found: {user}")
+       session['logged_in'] = True  # Indicate that the user is logged in
+       session['user_id'] = user[0]
+       session['email'] = user[1]
+       logging.debug(f"Session set: {session}")
+       return redirect(url_for('user_portfolio'))
+    else:
+       logging.debug("User not found.")
+       flash('User not found. Please try logging in again.', 'error')
+       return redirect(url_for('login'))
 
 
 @app.route('/stocks', methods=['POST'])
@@ -506,4 +578,3 @@ def get_graph():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
