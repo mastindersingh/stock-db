@@ -12,6 +12,35 @@ def get_db_connection():
         port=os.environ.get("POSTGRES_PORT", "5432")  # Defaulting to 5432 if not set
     )
 
+
+
+def verify_subscription_code(email, code):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT id FROM users WHERE email = %s AND subscription_code = %s", (email, code))
+        result = cursor.fetchone()
+        return result is not None
+    except Exception as e:
+        print(f"Error in verify_subscription_code: {e}")
+        return False
+    finally:
+        conn.close()
+
+def update_subscription_code(user_id, code):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("UPDATE users SET subscription_code = %s WHERE id = %s", (code, user_id))
+        conn.commit()
+    except Exception as e:
+        print(f"Error in update_subscription_code: {e}")
+    finally:
+        conn.close()
+
+
+
+
 def delete_stock(ticker):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -39,31 +68,6 @@ def delete_stock(ticker):
     finally:
         conn.close()
 
-
-
-def verify_subscription_code(email, code):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    try:
-        cursor.execute("SELECT id FROM users WHERE email = %s AND subscription_code = %s", (email, code))
-        result = cursor.fetchone()
-        return result is not None
-    except Exception as e:
-        print(f"Error in verify_subscription_code: {e}")
-        return False
-    finally:
-        conn.close()
-
-def update_subscription_code(user_id, code):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    try:
-        cursor.execute("UPDATE users SET subscription_code = %s WHERE id = %s", (code, user_id))
-        conn.commit()
-    except Exception as e:
-        print(f"Error in update_subscription_code: {e}")
-    finally:
-        conn.close()
 
 
 def get_subscription_code_for_user(user_id):
@@ -223,4 +227,3 @@ def check_user(email, password):
         return False
     finally:
         conn.close()
-
