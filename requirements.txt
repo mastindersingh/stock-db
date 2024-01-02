@@ -1,13 +1,12 @@
-Flask==1.1.4
-yfinance==0.2.33
 
+yfinance==0.2.33
+Werkzeug==3.0.1
 authlib
 python-dotenv
 psycopg2-binary
 matplotlib==3.5.1
-Werkzeug==0.16.1
-
-Flask-Mail
+Flask==3.0.0
+Flask-Mail==0.9.1
 
 pandas_datareader==0.9.0
 
