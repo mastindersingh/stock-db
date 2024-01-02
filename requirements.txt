@@ -1,6 +1,6 @@
 
 yfinance==0.2.33
-Werkzeug==3.0.1
+
 authlib
 python-dotenv
 psycopg2-binary
