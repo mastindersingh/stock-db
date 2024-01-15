@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Information and Resources</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+        h1, h2, h3 {
+            color: #0056b3;
+        }
+        p {
+            line-height: 1.6;
+        }
+        .navbar {
+            background-color: #0056b3;
+            overflow: hidden;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .navbar a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .navbar a:hover {
+            background-color: #004494;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/">Home</a>
+        <a href="/search_stock">Search Stocks</a>
+        <a href="/master_portfolio">Master Portfolio</a>
+        <a href="/subscribe">Subscribe</a>
+        <a href="/blog">Blog</a>
+    </div>
+
+    <div class="container">
+        <h1>Welcome to Our Stock Information and Resource Center</h1>
+        <h2>Search Stocks on Yahoo Finance</h2>
+        <p>Explore the world of stocks by searching for real-time information on Yahoo Finance. Get detailed insights into stock prices, market trends, and financial news. <a href="/search_stock">Start searching now.</a></p>
+
+        <h2>Exclusive Access to Master Portfolio</h2>
+        <p>Subscribed members have exclusive access to our Master Portfolio. This feature allows you to view our top-performing stocks and strategies for higher returns in the market. <a href="/master_portfolio">View Master Portfolio.</a></p>
+
+        <h2>Educational Resources and Expert Insights</h2>
+        <p>Gain access to our extensive library of study materials, including PDFs and blogs, where we share our insights on why we buy or sell certain stocks. These resources are invaluable for both beginners and experienced investors. <a href="/resources">Access educational resources.</a></p>
+
+        <h3>Not a Subscriber Yet?</h3>
+        <p>Join our community to unlock all features and stay ahead in the stock market. <a href="/subscribe">Subscribe now.</a></p>
+    </div>
+   <!-- Display Search Results -->
+        {% if stock_info %}
+            <div class="stock-data-container">
+                <h2>Search Results</h2>
+                <p>Stock Name: {{ stock_info.get('longName', 'Not Available') }}</p>
+                <p>Current Price: {{ stock_info.get('currentPrice', 'Not Available') }}</p>
+                <p>Sector: {{ stock_info.get('sector', 'Not Available') }}</p>
+                <p>Market Cap: {{ stock_info.get('marketCap', 'Not Available') }}</p>
+                <p>Dividend Yield: {{ stock_info.get('dividendYield', 'Not Available') }}</p>
+                <p>Average Volume: {{ stock_info.get('averageVolume', 'Not Available') }}</p>
+                <p>52 Week High: {{ stock_info.get('fiftyTwoWeekHigh', 'Not Available') }}</p>
+                <p>52 Week Low: {{ stock_info.get('fiftyTwoWeekLow', 'Not Available') }}</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+

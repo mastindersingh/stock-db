@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+ {% extends 'base.html' %}
+    {% block title %}
+    <title>Refund Policy</title>
+      {% endblock %}
+    {% block content %}
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+            padding: 50px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            text-align: left;
+        }
+
+        h1 {
+            color: #0056b3;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #0056b3;
+            margin-bottom: 20px;
+        }
+
+        p, li {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Refund Policy</h1>
+        <p>Welcome to our Refund Policy page. Here you will find information regarding our policies on refunds for our services and products.</p>
+        
+        <h2>Cancellation & Refunds</h2>
+        <ul>
+            <li><strong>Event Cancellation:</strong> In case of event cancellation by us, a full refund will be processed.</li>
+            <li><strong>Participant Cancellation:</strong> No refunds for cancellations made by participants. However, fees can be utilized for future courses.</li>
+            <li><strong>Refund Processing:</strong> Refunds are processed within 15 business days after approval.</li>
+        </ul>
+
+        <h2>Contact Information</h2>
+        <p>For any inquiries or requests regarding refunds, please contact us at <a href="mailto:supportstocklive@gmail.com">supportstocklive@gmail.com</a>.</p>
+
+        <div class="footer">
+            <p>© 2024 Indian Stock  Academy. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+{% endblock %}
+</html>
+

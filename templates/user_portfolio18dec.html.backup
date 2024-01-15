@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Master Stock Data</title>
+    <title>User Portfolio</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -11,33 +11,13 @@
             padding: 0;
         }
 
-        .navbar {
-            overflow: hidden;
-            background-color: #0056b3;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: center;
-            padding: 10px 0;
-        }
-
-        .navbar a {
-            display: inline-block;
-            color: white;
-            padding: 8px 16px;
-            text-decoration: none;
-        }
-
-        .navbar a:hover {
-            background-color: #004494;
-            color: white;
-        }
-
         .container {
             width: 100%;
             padding: 20px;
             box-sizing: border-box;
         }
 
-        .header, .stock-data-container {
+        .header, .form-container, .stock-data-container {
             max-width: 1200px;
             margin: auto;
             padding: 20px;
@@ -50,6 +30,33 @@
         h1, h2 {
             color: #0056b3;
             margin-bottom: 20px;
+        }
+
+        .form-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .form-container label, .form-container input {
+            margin-right: 10px;
+        }
+
+        input[type=text], input[type=date], input[type=number], input[type=submit] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input[type=submit] {
+            background-color: #0056b3;
+            color: white;
+            cursor: pointer;
+        }
+
+        input[type=submit]:hover {
+            background-color: #004494;
         }
 
         .stock-row {
@@ -68,12 +75,6 @@
             text-align: center;
         }
 
-        .stock-graph img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
-        }
-
         a {
             color: #007bff;
             text-decoration: none;
@@ -81,6 +82,27 @@
 
         a:hover {
             text-decoration: underline;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            overflow: hidden;
+            background-color:  #0056b3;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .navbar a {
+            display: inline-block;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #004494;
+            color: black;
         }
     </style>
 </head>
@@ -91,21 +113,16 @@
         <a href="{{ url_for('user_portfolio') }}">User Portfolio</a>
         <a href="{{ url_for('master_portfolio') }}">Master Portfolio</a>
         <a href="{{ url_for('subscribe') }}">Subscribe</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
         <a href="{{ url_for('contact') }}">Contact</a>
-        {% if 'logged_in' in session %}
-            <a href="{{ url_for('logout') }}">Logout</a>
-        {% else %}
-            <a href="{{ url_for('login') }}">Login</a>
-            <a href="{{ url_for('register') }}">Register</a>
-        {% endif %}
     </div>
 
     <div class="container">
         <div class="header">
-            <h1>Master Stock Data</h1>
+            <h1>User Portfolio</h1>
         </div>
-      
-      <div class="form-container">
+
+        <div class="form-container">
             <form action="{{ url_for('user_portfolio') }}" method="post">
                 <label for="ticker">Ticker:</label>
                 <input type="text" id="ticker" name="ticker" required>
@@ -131,21 +148,9 @@
                         <div class="stock-details">
                             <h2>{{ ticker }}</h2>
                             <p>Earliest Buy Date: {{ data.earliest_buy_date }}</p>
-                            <p>Weighted Average Buy Price: 
-                                {% if ticker.lower().endswith('.ns') %}
-                                    ₹{{ data.weighted_avg_price }}
-                                {% else %}
-                                    ${{ data.weighted_avg_price }}
-                                {% endif %}
-                            </p>
+                            <p>Weighted Average Buy Price: {{ data.weighted_avg_price }}</p>
                             <p>Total Quantity: {{ data.total_quantity }}</p>
-                            <p>Current Price: 
-                                {% if ticker.lower().endswith('.ns') %}
-                                    ₹{{ data.current_price }}
-                                {% else %}
-                                    ${{ data.current_price }}
-                                {% endif %}
-                            </p>
+                            <p>Current Price: {{ data.current_price }}</p>
                             <p>Performance: {{ data.performance }}</p>
                             <p>Percentage Change: {{ data.percentage_change }}%</p>
                         </div>

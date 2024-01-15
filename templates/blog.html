@@ -20,9 +20,39 @@
             <p>Learn the essentials of stock trading with our expert guides and tips.</p>
         </section>
 
-        <section class="blog-posts">
-            <!-- Blog posts content -->
+        <!-- Financial Terms Section -->
+        <section class="financial-terms">
+            <h2>Key Financial Terms Explained</h2>
+            <div class="term">
+                <h3>ROCE (Return on Capital Employed)</h3>
+                <p>This is a financial ratio that measures a company's profitability and the efficiency with which its capital is employed. ROCE is calculated as Earnings Before Interest and Tax (EBIT) divided by Capital Employed.</p>
+            </div>
+            <!-- Repeat for each financial term -->
+            <!-- ... other financial terms ... -->
+            <div class="term">
+                <h3>Cash and Cash Equivalents</h3>
+                <p>Highly liquid assets including currency, short-term investments, and treasury bills.</p>
+            </div>
         </section>
+
+            <!-- Blog posts content -->
+         <section class="blog-posts">
+        {% for post in posts %}
+        <article>
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.content }}</p>
+            <!-- Comments Form -->
+            <form method="post" action="/post_comment">
+                <textarea name="comment" placeholder="Leave a comment"></textarea>
+                <input type="hidden" name="post_id" value="{{ post.id }}">
+                <button type="submit">Post Comment</button>
+            </form>
+            <!-- Display Comments -->
+            <!-- Iterate and display comments related to the post -->
+        </article>
+        {% endfor %}
+    </section>
+        
     </main>
 
     <footer>

@@ -227,3 +227,28 @@ def check_user(email, password):
         return False
     finally:
         conn.close()
+
+# db.py
+
+def create_google_user(email, google_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("INSERT INTO users (email, google_id) VALUES (%s, %s)", (email, google_id))
+        conn.commit()
+    except psycopg2.Error as e:
+        print(f"Database error: {e}")
+    finally:
+        conn.close()
+
+def get_google_user(email):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT id, email, google_id FROM users WHERE email = %s", (email,))
+        user = cursor.fetchone()
+        return user
+    except psycopg2.Error as e:
+        print(f"Database error: {e}")
+    finally:
+        conn.close()

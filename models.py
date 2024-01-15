@@ -31,4 +31,5 @@ class BlogPost:
         conn.commit()
         conn.close()
 
-    # Add more methods as needed, such as delete, update, etc
+    # Add more methods as needed, such as delete, update, etc.
+

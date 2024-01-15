@@ -87,18 +87,14 @@
 <body>
     <!-- Navbar -->
     <div class="navbar">
-        <a href="{{ url_for('index') }}">Home</a>
-        <a href="{{ url_for('user_portfolio') }}">User Portfolio</a>
-        <a href="{{ url_for('master_portfolio') }}">Master Portfolio</a>
-        <a href="{{ url_for('subscribe') }}">Subscribe</a>
-        <a href="{{ url_for('contact') }}">Contact</a>
-        {% if 'logged_in' in session %}
+   {% if 'logged_in' in session %}
             <a href="{{ url_for('logout') }}">Logout</a>
         {% else %}
             <a href="{{ url_for('login') }}">Login</a>
             <a href="{{ url_for('register') }}">Register</a>
-        {% endif %}
-    </div>
+        {% endif %} 
+
+   </div>
 
     <div class="container">
         <div class="header">

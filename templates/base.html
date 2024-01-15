@@ -1,4 +1,3 @@
-<!-- base.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,10 +19,31 @@
             color: white;
             margin: 0 10px;
             text-decoration: none;
+            transition: transform 0.3s ease;
+            border: 2px solid transparent; /* Add border */
+            border-radius: 5px; /* Rounded corners for the border */
+            padding: 5px; /* Padding around the text */
         }
 
         .top-social-media a:hover {
             text-decoration: underline;
+            animation: colorShift 3s infinite alternate, move 0.5s ease-in-out;
+            border-color: white; /* Change border color on hover */
+        }
+
+        /* Keyframes for color shift */
+        @keyframes colorShift {
+            0% { color: white; }
+            25% { color: #ff6347; } /* Tomato */
+            50% { color: #1e90ff; } /* DodgerBlue */
+            75% { color: #32cd32; } /* LimeGreen */
+            100% { color: #ff1493; } /* DeepPink */
+        }
+
+        /* Keyframes for moving effect */
+        @keyframes move {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
 
         .navbar {
@@ -53,8 +73,9 @@
     <!-- Top Social Media Bar -->
     <div class="top-social-media">
         <a href="https://www.facebook.com" target="_blank">Facebook</a>
-        <a href="https://wa.me" target="_blank">WhatsApp</a>
-        <a href="https://www.linkedin.com" target="_blank">LinkedIn</a>
+        <a href="https://wa.me/8105601518" target="_blank">WhatsApp</a>
+        <a href="https://www.linkedin.com/groups/14358960" target="_blank">LinkedIn</a>
+        <a href="https://www.youtube.com/@mastinder/videos" target="_blank" class="youtube-link">YouTube</a>
     </div>
 
     <!-- Navbar -->
@@ -66,6 +87,13 @@
         <a href="{{ url_for('contact') }}">Contact</a>
         <a href="{{ url_for('aboutus') }}">About Us</a>
         <a href="{{ url_for('show_lessons') }}">Lessons</a>
+        <a href="{{ url_for('video_gallery') }}">video</a>
+        {% if 'logged_in' in session %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Register</a>
+        {% endif %}
     </div>
 
     <!-- Main Content Block -->
@@ -90,3 +118,4 @@
     <script src="{{ url_for('static', filename='main.js') }}"></script>
 </body>
 </html>
+

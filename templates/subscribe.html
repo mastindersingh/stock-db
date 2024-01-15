@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+    {% extends 'base.html' %}
 <html>
+     {% block content %}
 <head>
     <title>Subscribe</title>
     <style>
@@ -81,16 +83,9 @@
 <body>
     <!-- Navbar -->
     <div class="navbar">
-        <a href="{{ url_for('index') }}">Home</a>
-        <a href="{{ url_for('user_portfolio') }}">User Portfolio</a>
-        <a href="{{ url_for('master_portfolio') }}">Master Portfolio</a>
-        <a href="{{ url_for('subscribe') }}">Subscribe</a>
-         <a href="{{ url_for('contact') }}">Contact</a>
-        <a href="{{ url_for('aboutus') }}">Aboutus</a>
         {% if 'logged_in' in session %}
             <a href="{{ url_for('logout') }}">Logout</a>
         {% else %}
-            <a href="{{ url_for('login') }}">Login</a>
             <a href="{{ url_for('register') }}">Register</a>
         {% endif %}
     </div>
@@ -107,5 +102,25 @@
             </form>
         </div>
     </div>
+    
+            <h1>UPI Payment</h1>
+            <div class="payment-options">
+                <!-- UPI Link Payment Option -->
+                <div class="payment-option">
+                    <h2>Pay Using UPI ID</h2>
+                    <p>Use the following UPI ID to make the payment:</p>
+                    <p><strong>8105601518@ybl</strong></p>
+                </div>
+
+                <!-- QR Code Payment Option -->
+                <div class="payment-option">
+                    <h2>Scan QR Code to Pay</h2>
+                    <div class="qr-code">
+                        <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/12696623/294174308-4d348eaa-5878-4ef9-8194-67b758a2565a.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20240104%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240104T121109Z&X-Amz-Expires=300&X-Amz-Signature=ffa944fe95b6a71b664fe3f2e977ec0a1539ad369a73061abf476733c0ccec09&X-Amz-SignedHeaders=host&actor_id=12696623&key_id=0&repo_id=736136721" alt="UPI QR Code">
+                    </div>
+                </div>
+        
+      
 </body>
+{% endblock %}
 </html>

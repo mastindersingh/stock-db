@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <style>
+        /* Existing styles... */
+
+        /* Navbar styles */
+        .navbar {
+            overflow: hidden;
+            background-color: #0056b3; /* Match the color of the login button */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .navbar a {
+            display: inline-block;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #004494; /* Darker shade for hover, similar to button hover */
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('user_portfolio') }}">User Portfolio</a>
+        <a href="{{ url_for('master_portfolio') }}">Master Portfolio</a>
+        <a href="{{ url_for('subscribe') }}">Subscribe</a>
+        <!-- No login/register links as this is the login page -->
+    </div>
+
+    <div class="container">
+        <h1>Login</h1>
+        <form method="post" action="/login">
+            <input type="email" name="email" placeholder="Email">
+            <input type="password" name="password" placeholder="Password">
+            <button type="submit">Login</button>
+        </form>
+
+        <!-- Google OAuth Login -->
+        <div class="oauth-container">
+            <a href="/login/google">Login with Google</a>
+        </div>
+
+        <div class="register-container">
+            <!-- Link to Registration Page -->
+            <p>Don't have an account? <a href="/register">Register here</a>.</p>
+        </div>
+    </div>
+</body>
+</html>
+

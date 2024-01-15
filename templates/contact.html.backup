@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contact Us</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f2f2f2;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .container {
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .contact-container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #0056b3;
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin: 5px 0;
+            line-height: 1.6;
+        }
+
+        .address {
+            text-align: left;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="contact-container">
+            <h1>Contact Us</h1>
+            <p>If you have any questions or need further information, please feel free to contact us.</p>
+            
+            <div class="address">
+                <h2>Our Address</h2>
+                <p>3909 SW Feather St. 05-04<br>
+                Unit #05-04<br>
+                Bentonville, AR 72713</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

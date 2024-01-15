@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+ {% extends 'base.html' %}
+    {% block title %}
+    <title>UPI Payment</title>
+  {% endblock %}
+     {% block content %}
+    <style>
+        /* Existing styles */
+        /* ... */
+
+        .payment-options {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .payment-option {
+            margin-bottom: 30px;
+        }
+
+        .qr-code {
+            max-width: 200px;
+            margin: auto;
+        }
+
+        .qr-code img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <!-- Navbar links -->
+        <!-- ... -->
+    </div>
+
+    <div class="container">
+        <div class="form-container">
+            <h1>UPI Payment</h1>
+            <div class="payment-options">
+                <!-- UPI Link Payment Option -->
+                <div class="payment-option">
+                    <h2>Pay Using UPI ID</h2>
+                    <p>Use the following UPI ID to make the payment:</p>
+                    <p><strong>8105601518@ybl</strong></p>
+                </div>
+
+                <!-- QR Code Payment Option -->
+                <div class="payment-option">
+                    <h2>Scan QR Code to Pay</h2>
+                    <div class="qr-code">
+                        <img src="https://i.ibb.co/6Rr1cZ5/IMG-C540-D31-FE8-AC-1.jpg"
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}
+</html>
+

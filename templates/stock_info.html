@@ -40,6 +40,18 @@
         .navbar a:hover {
             background-color: #004494;
         }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 <body>
@@ -64,21 +76,127 @@
 
         <h3>Not a Subscriber Yet?</h3>
         <p>Join our community to unlock all features and stay ahead in the stock market. <a href="/subscribe">Subscribe now.</a></p>
-    </div>
-   <!-- Display Search Results -->
+
+        <!-- Display Search Results -->
         {% if stock_info %}
             <div class="stock-data-container">
-                <h2>Search Results</h2>
+                <h2>Search Results for {{ stock_info.get('symbol', 'Unknown') }}</h2>
                 <p>Stock Name: {{ stock_info.get('longName', 'Not Available') }}</p>
                 <p>Current Price: {{ stock_info.get('currentPrice', 'Not Available') }}</p>
-                <p>Sector: {{ stock_info.get('sector', 'Not Available') }}</p>
-                <p>Market Cap: {{ stock_info.get('marketCap', 'Not Available') }}</p>
-                <p>Dividend Yield: {{ stock_info.get('dividendYield', 'Not Available') }}</p>
-                <p>Average Volume: {{ stock_info.get('averageVolume', 'Not Available') }}</p>
-                <p>52 Week High: {{ stock_info.get('fiftyTwoWeekHigh', 'Not Available') }}</p>
-                <p>52 Week Low: {{ stock_info.get('fiftyTwoWeekLow', 'Not Available') }}</p>
+                <!-- Additional stock details -->
+                <!-- ... other details ... -->
+
+                <!-- Displaying Historical Data -->
+                <h3>Historical Data (Last Month)</h3>
+                {% if stock_info.get('history') %}
+                    <table>
+                        <tr>
+                            <th>Date</th>
+                            <th>Open</th>
+                            <th>High</th>
+                            <th>Low</th>
+                            <th>Close</th>
+                            <th>Volume</th>
+                        </tr>
+                        {% for date, data in stock_info['history']['Close'].items() %}
+                        <tr>
+                            <td>{{ date }}</td>
+                            <td>{{ stock_info['history']['Open'][date] }}</td>
+                            <td>{{ stock_info['history']['High'][date] }}</td>
+                            <td>{{ stock_info['history']['Low'][date] }}</td>
+                            <td>{{ data }}</td>
+                            <td>{{ stock_info['history']['Volume'][date] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    <p>Historical data not available.</p>
+                {% endif %}
+
+                <!-- Displaying Actions (Dividends, Splits) -->
+                <h3>Stock Actions</h3>
+                {% if stock_info.get('actions') %}
+                    <table>
+                        <tr>
+                            <th>Date</th>
+                            <th>Dividends</th>
+                            <th>Splits</th>
+                        </tr>
+                        {% for date, data in stock_info['actions'].items() %}
+                        <tr>
+                            <td>{{ date }}</td>
+                            <td>{{ data['Dividends'] }}</td>
+                            <td>{{ data['Stock Splits'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    <p>Actions data not available.</p>
+                {% endif %}
+
+                <!-- Displaying Financials -->
+                <h3>Financials</h3>
+                {% if stock_info.get('financials') %}
+                    <!-- Financials table or summary -->
+                    <!-- ... -->
+                {% else %}
+                    <p>Financial data not available.</p>
+                {% endif %}
+
+                <!-- Displaying Major Holders -->
+                <h3>Major Holders</h3>
+                {% if stock_info.get('major_holders') %}
+                    <!-- Major Holders data display -->
+                    <!-- ... -->
+                {% else %}
+                    <p>Major holders data not available.</p>
+                {% endif %}
+
+                <!-- Displaying Institutional Holders -->
+                <h3>Institutional Holders</h3>
+                {% if stock_info.get('institutional_holders') %}
+                    <!-- Institutional Holders data display -->
+                    <!-- ... -->
+                {% else %}
+                    <p>Institutional holders data not available.</p>
+                {% endif %}
+
+                <!-- Displaying Earnings Dates -->
+                <h3>Earnings Dates</h3>
+                {% if stock_info.get('earnings_dates') %}
+                    <!-- Earnings Dates data display -->
+                    <!-- ... -->
+                {% else %}
+                    <p>Earnings dates data not available.</p>
+                {% endif %}
+
+                <!-- Displaying ISIN -->
+                <h3>ISIN Code</h3>
+                <p>{{ stock_info.get('isin', 'Not Available') }}</p>
+
+                <!-- Displaying Options -->
+                <h3>Options</h3>
+                {% if stock_info.get('options') %}
+                    <!-- Options data display -->
+                    <!-- ... -->
+                {% else %}
+                    <p>Options data not available.</p>
+                {% endif %}
+
+                <!-- Displaying News -->
+                <h3>Latest News</h3>
+                {% if stock_info.get('news') %}
+                    <ul>
+                        {% for item in stock_info['news'] %}
+                            <li><a href="{{ item['link'] }}">{{ item['title'] }}</a> - {{ item['publisher'] }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No recent news available.</p>
+                {% endif %}
             </div>
         {% endif %}
     </div>
 </body>
 </html>
+

@@ -3,7 +3,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import os
-from db import delete_stock, get_subscription_code_for_user, update_subscription_code, read_stock_purchases, write_stock_purchases, get_user_id, verify_user, create_user, verify_subscription_code
+from db import get_google_user, create_google_user, delete_stock, get_subscription_code_for_user, update_subscription_code, read_stock_purchases, write_stock_purchases, get_user_id, verify_user, create_user, verify_subscription_code
 import yfinance as yf
 import matplotlib
 matplotlib.use('Agg')  # Set the backend to Agg
@@ -22,7 +22,8 @@ from lesson import lessons
 import yfinance.exceptions as yf_exceptions
 from pandas_datareader import data as pdr
 yf.pdr_override()
-
+from model1 import db, User
+SECRET_KEY_ENV_VARIABLE='bApG1HXBfOeC5JhRj_tvKA'
 
 #from flask_oauthlib.client import OAuth
 #from authlib.integrations.flask_client import OAuth
@@ -33,31 +34,14 @@ from authlib.integrations.flask_client import OAuth
 matplotlib.use('Agg')
 from authlib.integrations.base_client.errors import OAuthError  # Add this import 
 app = Flask(__name__)
-app.secret_key = os.environ.get('bApG1HXBfOeC5JhRj_tvKA', 'your-default-secret-key')
+app.secret_key = os.environ.get('SECRET_KEY_ENV_VARIABLE', 'your-default-secret-key')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://default:QhYas0zXyE7A@ep-royal-thunder-45099107-pooler.us-east-1.postgres.vercel-storage.com:5432/verceldb'
-#db.init_app(app)
 from authlib.integrations.base_client.errors import OAuthError  # Add this import
 import uuid  # Add this import at the beginning of your script
-
-app.config['SESSION_COOKIE_SECURE'] = False
-
-#oauth = OAuth(app)
-
-#google = oauth.register(
-    #name='google',
-    #client_id='72321166098-rqs54h296h3pp6clb1h19cn7bp4rp8rn.apps.googleusercontent.com',
-    #client_secret='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',
-    #access_token_url='https://accounts.google.com/o/oauth2/token',
-    #authorize_url='https://accounts.google.com/o/oauth2/auth',
-    #api_base_url='https://www.googleapis.com/oauth2/v1/',
-    #jwks_uri='https://www.googleapis.com/oauth2/v3/certs',
-    #client_kwargs={'scope': 'openid email profile'},
-#)
-
-#@app.route('/login/google')
-#def login_google():
-    #redirect_uri = url_for('authorized', _external=True)
-    #return google.authorize_redirect(redirect_uri)
+#from blog_post import BlogPost 
+mpl_config_dir = '/tmp/matplotlib_config'
+os.makedirs(mpl_config_dir, exist_ok=True)
+os.environ['MPLCONFIGDIR'] = mpl_config_dir
 
 def get_stock_recommendations():
     # Replace this with actual logic to fetch data from your database
@@ -67,14 +51,38 @@ def get_stock_recommendations():
     ]
 
 
+
 @app.route('/blog')
 def blog():
-    posts = BlogPost.get_all_posts()  # Use the static method to fetch all blog posts
+    posts = BlogPost.get_all_posts()  # Fetch all blog posts
+    # Fetch comments for each post here (if you have a Comment class or method)
     return render_template('blog.html', posts=posts)
+
+@app.route('/post_comment', methods=['POST'])
+def post_comment():
+    # Extract comment and post_id from the form
+    comment_text = request.form.get('comment')
+    post_id = request.form.get('post_id')
+    # Save the comment to the database (you'll need a method or class for this)
+    # Redirect back to the blog page
+    return redirect('/blog')
+
+
+
 
 @app.route('/video_gallery')
 def video_gallery():
     return render_template('video_gallery.html')
+
+
+@app.route('/refund')
+def refund_gallery():
+    return render_template('refund.html')
+
+
+@app.route('/payment')
+def payment_gallery():
+    return render_template('payment.html')
 
 @app.route('/lessons')
 def show_lessons():

@@ -1,0 +1,21 @@
+/* Base styles */
+.top-social-media a {
+    /* ... existing styles ... */
+}
+
+/* Smaller screens */
+@media screen and (max-width: 600px) {
+    .top-social-media a {
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+}
+
+/* Larger screens */
+@media screen and (min-width: 601px) {
+    .top-social-media a {
+        padding: 8px 12px;
+        font-size: 16px;
+    }
+}
+
