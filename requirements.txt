@@ -17,4 +17,4 @@ pandas-datareader==0.9.0
 psycopg2-binary
 python-dotenv
 Werkzeug==3.0.1
-yfinance==0.2.32
+yfinance==0.2.31
