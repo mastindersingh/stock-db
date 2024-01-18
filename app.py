@@ -35,7 +35,7 @@ matplotlib.use('Agg')
 from authlib.integrations.base_client.errors import OAuthError  # Add this import 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY_ENV_VARIABLE', 'your-default-secret-key')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://default:QhYas0zXyE7A@ep-royal-thunder-45099107-pooler.us-east-1.postgres.vercel-storage.com:5432/verceldb'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://default:QhYas0zXyE7A@ep-royal-thunder-45099107-pooler.us-east-1.postgres.vercel-storage.com:5432/verceldb'
 from authlib.integrations.base_client.errors import OAuthError  # Add this import
 import uuid  # Add this import at the beginning of your script
 #from blog_post import BlogPost 
